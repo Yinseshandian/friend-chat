@@ -1,0 +1,36 @@
+server:
+  port: 8001
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  application:
+    name: chat-user
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/friend_chat?characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 951983940
+    driver-class-name: com.mysql.jdbc.Driver
+    hikari:
+      connection-timeout: 10000
+      validation-timeout: 3000
+      login-timeout: 5
+      idle-timeout: 60000
+      max-lifetime: 60000
+      maximum-pool-size: 10
+      minimum-idle: 5
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        format_sql: true
+    open-in-view: true
+
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848

@@ -1,0 +1,38 @@
+package com.li.chat.feign;
+
+import com.li.chat.domain.DTO.ApplyDTO;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * @author malaka
+ */
+@FeignClient(name = "chat-user", contextId = "userApply")
+@RequestMapping("/chat-user/apply")
+public interface ApplyFeign {
+
+    /**
+     * 好友申请
+     * @param applyDTO
+     */
+    @PostMapping
+    void apply(@RequestBody ApplyDTO applyDTO);
+
+    /**
+     * 查询是否有申请
+     * @param id
+     * @param toId
+     * @return
+     */
+    @GetMapping("/findByIdAndToId")
+    ApplyDTO findByIdAndToId(@RequestParam("id") Long id,
+                             @RequestParam("toId") Long toId);
+
+    /**
+     * 同意
+     * @param id
+     * @param toRemark
+     */
+    @GetMapping("/agree")
+    void agree(@RequestParam("id") Long id, @RequestParam(value = "toRemark", required = false) String toRemark);
+}

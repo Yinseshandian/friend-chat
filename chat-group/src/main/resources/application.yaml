@@ -1,0 +1,57 @@
+server:
+  port: 7001
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  application:
+    name: chat-group
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/friend_chat?characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 951983940
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 2 # 初始化时建立物理连接的个数。默认0
+      max-active: 10 # 最大连接池数量，默认8
+      min-idle: 1 # 最小连接池数量
+      max-wait: 2000 # 获取连接时最大等待时间，单位毫秒。
+      pool-prepared-statements: false # 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
+      max-pool-prepared-statement-per-connection-size: -1 # 要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100
+
+#    hikari:
+#      connection-timeout: 10000
+#      validation-timeout: 3000
+#      login-timeout: 5
+#      idle-timeout: 60000
+#      max-lifetime: 60000
+#      maximum-pool-size: 10
+#      minimum-idle: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        format_sql: true
+    open-in-view: true
+
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+seata:
+  application-id: serverAddr
+  enabled: true
+  tx-service-group: friend-chat-tx-group
+  registry:
+    type: nacos
+    nacos:
+      server-addr: ${spring.cloud.nacos.discovery.server-addr}
+
+  service:
+    disable-global-transaction: false

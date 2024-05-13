@@ -1,0 +1,29 @@
+server:
+  port: 4001
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  application:
+    name: chat-base
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    jedis:
+      pool:
+        max-active: 100
+        max-idle: 10
+        max-wait: 100000
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+minio:
+  endpoint: http://127.0.0.1:9000 #Minio服务所在地址
+  bucketName: friendchat #存储桶名称
+  access-key: Gv8exgw817ApcD90 #访问的key
+  secret-key: b2u3UrLcltGm2F9xJGAiueIRJNjNMWOL #访问的秘钥

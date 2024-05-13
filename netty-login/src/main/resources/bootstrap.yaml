@@ -1,0 +1,34 @@
+socket.io:
+  port: 10100
+  workThreads: 100
+  allowCustomRequests: true
+  upgradeTimeout: 10000
+  pingTimeout: 60000
+  pingInterval: 25000
+  maxHttpContentLength: 1048576
+  maxFramePayloadLength: 1048576
+
+server:
+  port: 9021
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  application:
+    name: chat-base
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    jedis:
+      pool:
+        max-active: 100
+        max-idle: 10
+        max-wait: 100000
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB

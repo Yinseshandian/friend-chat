@@ -1,0 +1,47 @@
+/target/
+.idea
+*.iml
+.tags
+.tags_sorted_by_file
+.pyc
+__pycache__
+.cache
+.settings
+.classpath
+.project
+.DS_Store
+*.pid
+*Help
+target
+log.*
+log.home_IS_UNDEFINED
+doc/api_doc
+
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+*.iws
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
