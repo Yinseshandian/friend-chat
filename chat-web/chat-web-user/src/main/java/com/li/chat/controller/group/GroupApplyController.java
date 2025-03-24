@@ -97,15 +97,29 @@ public class GroupApplyController {
         if (BeanUtil.isEmpty(groupDTO)) {
             return ResultData.error(WebErrorCodeEnum.GROUP_NOT_FOUND);
         }
-        boolean isMember = groupMemberFeign.isGroupMember(userId, groupId);
+        GroupMemberDTO member = groupMemberFeign.findByGroupIdAndUserId(groupId, userId);
         // 不是群成员不能邀请其他用户
-        if (!isMember) {
+        if (member == null) {
             return ResultData.error(WebErrorCodeEnum.GROUP_APPLY_ALREADY_NOT_A_GROUP_MEMBER);
         }
         // 移除不存在的用户
         List<Long> userIds = userFeign.filterNotExistIds(param.getUserIdList());
         if (userIds.isEmpty()) {
             return ResultData.success();
+        }
+        Integer type = member.getType();
+        // 管理或群主直接拉入
+        if (GroupMemberTypeEnum.TYPE_MANAGER.equals(type)
+                || GroupMemberTypeEnum.TYPE_MASTER.equals(type)) {
+            for (Long id : userIds) {
+                GroupMemberDTO newMember = GroupMemberDTO.builder()
+                        .userId(id)
+                        .groupId(groupId)
+                        .type(GroupMemberTypeEnum.TYPE_MEMBER)
+                        .build();
+                groupMemberFeign.create(newMember);
+            }
+            return ResultData.success(userIds);
         }
         List<GroupApplyDTO> inviteList = new ArrayList<>();
         for (Long id : userIds) {
@@ -133,6 +147,9 @@ public class GroupApplyController {
         Long userId = RequestContext.getUserId();
         Long groupId = applyDTO.getGroupId();
         GroupMemberDTO groupMemberDTO = groupMemberFeign.findByGroupIdAndUserId(groupId, userId);
+        if (groupMemberDTO==null) {
+            return ResultData.error(WebErrorCodeEnum.GROUP_APPLY_NOT_MANAGER);
+        }
         Integer type = groupMemberDTO.getType();
         // 管理员或群主可同意
         if (Objects.equals(type, GroupMemberTypeEnum.TYPE_MANAGER) || Objects.equals(type, GroupMemberTypeEnum.TYPE_MASTER)) {

@@ -99,5 +99,10 @@ public class GroupManagementServiceImpl implements GroupManagementService {
         return 1;
     }
 
+    @Override
+    public void update(Group group) {
+        groupManagementRepository.save(group);
+    }
+
 
 }

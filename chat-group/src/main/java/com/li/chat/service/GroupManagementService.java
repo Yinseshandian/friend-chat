@@ -42,4 +42,6 @@ public interface GroupManagementService {
      * @param id
      */
     int deleteById(Long id);
+
+    void update(Group group);
 }

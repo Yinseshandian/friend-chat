@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +42,7 @@ public class GroupMemberController {
     @ApiOperation(value = "获取群成员")
     @GlobalTransactional
     @GetMapping("/list")
-    public ResultData create(Long groupId) {
+    public ResultData list(Long groupId) {
         Long userId = RequestContext.getUserId();
         GroupMemberDTO member = groupMemberFeign.findByGroupIdAndUserId(groupId, userId);
         if (ObjectUtil.isEmpty(member)) {
@@ -49,16 +50,12 @@ public class GroupMemberController {
         }
         List<GroupMemberDTO> groupMemberDTOList = groupMemberFeign.findAllByGroupId(groupId);
         // 通过用户id列表 获取用户信息
-        List<Long> userIdList = groupMemberDTOList.stream().mapToLong(GroupMemberDTO::getUserId).boxed().collect(Collectors.toList());
-        List<UserDTO> userDTOList = userFeign.findAllUnDelByIds(userIdList);
-        // 排序成员列表，保证顺序和用户列表一致
-        groupMemberDTOList.sort(Comparator.comparingLong(GroupMemberDTO::getUserId));
-        userDTOList.sort(Comparator.comparingLong(UserDTO::getId));
+        Map<Long, GroupMemberDTO> userIdMapMember = groupMemberDTOList.stream().collect(Collectors.toMap(GroupMemberDTO::getUserId, o -> o));
+        List<UserDTO> userDTOList = userFeign.findAllUnDelByIds(userIdMapMember.keySet());
 
         List<GroupMemberVo> groupMemberVoList = new ArrayList<>();
-        for (int i = 0; i < groupMemberDTOList.size(); i++) {
-            GroupMemberDTO groupMemberDTO = groupMemberDTOList.get(i);
-            UserDTO userDTO = userDTOList.get(i);
+        for (UserDTO userDTO : userDTOList) {
+            GroupMemberDTO groupMemberDTO = userIdMapMember.get(userDTO.getId());
             GroupMemberVo groupMemberVo = GroupMemberVo.builder()
                     .id(groupMemberDTO.getId())
                     .userId(groupMemberDTO.getUserId())
@@ -71,7 +68,8 @@ public class GroupMemberController {
             groupMemberVoList.add(groupMemberVo);
         }
 
-        return ResultData.success(groupMemberVoList);
+        return ResultData.success(groupMemberVoList)
+                .put("memberType", member.getType());
     }
 
     @ApiOperation(value = "退出群聊")

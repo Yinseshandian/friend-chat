@@ -27,7 +27,7 @@ public class UserUpdateParam {
     private String nickname;
 
     @ApiModelProperty(value = "头像")
-    private String photo;
+    private String avatar;
 
     @ApiModelProperty(value = "签名")
     private String signature;

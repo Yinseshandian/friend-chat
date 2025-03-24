@@ -1,18 +1,22 @@
 package com.li.chat.param.group;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author malaka
  */
-
 @Data
-@ApiModel("Param群聊创建")
-public class GroupCreateParam {
+public class GroupUpdateParam {
+
+    @NotNull
+    @ApiModelProperty(value = "群id")
+    private Long id;
 
     @Length(min =1,
             max = 24,
@@ -25,5 +29,12 @@ public class GroupCreateParam {
             max = 2
     )
     private Integer joinMode;
+
+    @ApiModelProperty(value = "头像")
+    private String photo;
+
+    @ApiModelProperty(value = "介绍")
+    private String introduction;
+
 
 }

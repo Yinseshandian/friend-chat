@@ -16,14 +16,17 @@ import com.li.chat.feign.GroupManagementFeign;
 import com.li.chat.feign.GroupMemberFeign;
 import com.li.chat.param.group.GroupApplyParam;
 import com.li.chat.param.group.GroupCreateParam;
+import com.li.chat.param.group.GroupUpdateParam;
 import io.seata.spring.annotation.GlobalTransactional;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 /**
@@ -43,7 +46,6 @@ public class GroupManagementController {
         this.groupMemberFeign = groupMemberFeign;
     }
 
-
     @ApiOperation(value = "创建群聊")
     @GlobalTransactional
     @PostMapping("/create")
@@ -55,6 +57,9 @@ public class GroupManagementController {
                 .memberSize(DefaultGroupParam.DEFAULT_GROUP_MEMBER_SIZE)
                 .memberNum(1)
                 .holderUserId(userId)
+                // 默认头像
+                .photo("http://127.0.0.1:9000/friendchat/group-avatar/group.jpg")
+                .introduction("")
                 .build();
         Long groupId = groupManagementFeign.create(groupDTO);
         GroupMemberDTO member = GroupMemberDTO.builder()
@@ -75,6 +80,18 @@ public class GroupManagementController {
         return ResultData.success(groupDTOList);
     }
 
+    @ApiOperation(value = "群聊信息")
+    @GlobalTransactional
+    @GetMapping("/info/{groupId}")
+    public ResultData info(@PathVariable("groupId") Long groupId) {
+        Long userId = RequestContext.getUserId();
+        if (!groupMemberFeign.isGroupMember(userId, groupId)) {
+            return ResultData.error(WebErrorCodeEnum.GROUP_MEMBER_NOT_MEMBER);
+        }
+        GroupDTO group = groupManagementFeign.findGroupById(groupId);
+
+        return ResultData.success(group);
+    }
 
     @ApiOperation(value = "删除群聊")
     @GlobalTransactional
@@ -91,6 +108,24 @@ public class GroupManagementController {
         return ResultData.success();
     }
 
+    @ApiOperation(value = "更新群聊")
+    @GlobalTransactional
+    @PutMapping("/update")
+    public ResultData delete(@RequestBody GroupUpdateParam param) {
+        Long userId = RequestContext.getUserId();
+        Long groupId = param.getId();
+        GroupMemberDTO manager = groupMemberFeign.findByGroupIdAndUserId(groupId, userId);
+        if (BeanUtil.isEmpty(manager)
+                || (ObjectUtil.notEqual(manager.getType(), GroupMemberTypeEnum.TYPE_MASTER)
+                && ObjectUtil.notEqual(manager.getType(), GroupMemberTypeEnum.TYPE_MANAGER))) {
+            return ResultData.error(WebErrorCodeEnum.GROUP_MEMBER_NOT_MANAGER);
+        }
+        GroupDTO groupDTO = new GroupDTO();
+        BeanUtils.copyProperties(param, groupDTO);
+        groupManagementFeign.update(groupDTO);
+
+        return ResultData.success();
+    }
     
 
 }

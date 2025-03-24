@@ -5,7 +5,9 @@ import com.li.chat.domain.DTO.GroupDTO;
 import com.li.chat.entity.Group;
 import com.li.chat.service.GroupApplyService;
 import com.li.chat.service.GroupManagementService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -74,6 +76,16 @@ public class GroupManagementController {
     @DeleteMapping("/deleteById")
     public int deleteById(@RequestParam("id") Long id) {
         return groupManagementService.deleteById(id);
+    }
+
+    @PutMapping("/update")
+    public void update(@RequestBody GroupDTO groupDTO) {
+        if (ObjectUtils.isEmpty(groupDTO.getId())) {
+            throw new RuntimeException("更新失败，未找到该用户。");
+        }
+        Group group = new Group();
+        BeanUtils.copyProperties(groupDTO, group);
+        groupManagementService.update(group);
     }
 
 }

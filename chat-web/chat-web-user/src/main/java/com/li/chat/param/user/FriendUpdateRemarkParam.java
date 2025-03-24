@@ -19,9 +19,9 @@ public class FriendUpdateRemarkParam {
     private Long friendId;
 
     @ApiModelProperty(value = "好友备注", required = true)
-    @Length(min = 1,
+    @Length(min = 0,
             max = 24,
-            message = "备注长度为1-24个字符")
+            message = "备注最多24个字符")
     private String remark;
 
 }

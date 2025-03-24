@@ -22,7 +22,7 @@ public class AuthLoginParam {
     )
     @NotNull(message = "请输入账号")
     @Pattern(message = "账号由5-20个字母、数字、字符-_组成，以字母开头",
-            regexp = "^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$")
+            regexp = "^[a-zA-Z]([-_a-zA-Z0-9]{4,19})+$")
     private String username;
 
     @ApiModelProperty(
