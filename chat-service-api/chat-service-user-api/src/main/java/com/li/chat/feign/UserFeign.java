@@ -5,6 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -78,7 +79,7 @@ public interface UserFeign {
      * @return
      */
     @GetMapping("/findAllUnDelByIds")
-    List<UserDTO> findAllUnDelByIds(@RequestParam("ids") List<Long> ids);
+    List<UserDTO> findAllUnDelByIds(@RequestParam("ids") Collection<Long> ids);
 
     /**
      * 登录

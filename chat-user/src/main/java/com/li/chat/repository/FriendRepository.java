@@ -15,16 +15,16 @@ import java.util.List;
  */
 public interface FriendRepository extends JpaRepository<Friend, Long>, JpaSpecificationExecutor<Friend> {
 
-    Friend findByUserIdAndFriendId(Long userId, Long friendId);
+    Friend findByUserSmallIdAndUserBigId(Long userId, Long friendId);
 
-    List<Friend> findByUserIdOrFriendId(Long userId, Long friendId);
+    List<Friend> findByUserSmallIdOrUserBigId(Long userId, Long friendId);
 
     @Query(value = "SELECT * FROM chat_user u \n" +
-            "JOIN chat_friend f ON u.id = f.user_id \n" +
+            "JOIN chat_friend f ON u.id = f.user_small_id \n" +
             "WHERE u.id = '%?1%' AND (u.username LIKE '%?2%' \n" +
             "OR u.nickname LIKE '%?2%'\n" +
-            "OR f.friend_remark LIKE '%?2%'\n" +
-            "OR f.friend_id LIKE '%?2%')\n" +
+            "OR f.user_big_remark LIKE '%?2%'\n" +
+            "OR f.user_big_id LIKE '%?2%')\n" +
             "\n", nativeQuery = true)
     List<Friend> findFriendForFs(Long userId, String q);
 

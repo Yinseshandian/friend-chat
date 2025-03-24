@@ -20,8 +20,10 @@ public class PageResultData<T> {
     // 分页大小
     private Integer pageSize;
     // 当前页
-    private Integer page;
+    private Integer pageNum;
     // 数据
-    private Collection<T> items;
+    private Collection<T> rows;
+
+    private Integer code;
 
 }

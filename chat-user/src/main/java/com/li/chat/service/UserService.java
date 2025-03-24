@@ -2,6 +2,7 @@ package com.li.chat.service;
 
 import com.li.chat.entity.User;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -65,7 +66,7 @@ public interface UserService {
      * @param status
      * @return
      */
-    List<User> findAllByIds(List<Long> ids, List<Integer> status);
+    List<User> findAllByIds(Collection<Long> ids, Collection<Integer> status);
 
     /**
      * 使用id登录

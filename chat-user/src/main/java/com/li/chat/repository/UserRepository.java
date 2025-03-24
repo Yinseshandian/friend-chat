@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -43,8 +44,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
      * @param status
      * @return
      */
-    List<User> findAllByIdInAndStatusIn(@Param("userIds")List<Long> userIds,
-                                        @Param("status")List<Integer> status);
+    List<User> findAllByIdInAndStatusIn(@Param("userIds") Collection<Long> userIds,
+                                        @Param("status")Collection<Integer> status);
 
 
 

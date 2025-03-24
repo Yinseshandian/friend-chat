@@ -52,10 +52,10 @@ public class User extends BaseEntity{
     @Column(columnDefinition = "tinyint default 0")
     private Integer status; // 0：正常，1：冻结，2：注销
 
-    @OneToMany(mappedBy = "user")
-    private Set<Friend> friendsU;
+    @OneToMany(mappedBy = "userSmall")
+    private Set<Friend> friendsSmallSet;
 
-    @OneToMany(mappedBy = "friend")
-    private Set<Friend> friendsF;
+    @OneToMany(mappedBy = "userBig")
+    private Set<Friend> friendsBigSet;
 
 }

@@ -95,7 +95,7 @@ public class UserInfoController {
 
     @ApiOperation("更改用户信息")
     @GlobalTransactional
-    @PutMapping
+    @PutMapping("update")
     public ResultData update(@RequestBody @Valid UserUpdateParam userUpdateParam) {
         UserDTO userDTO = new UserDTO();
         BeanUtils.copyProperties(userUpdateParam, userDTO);
@@ -133,7 +133,7 @@ public class UserInfoController {
         }
         try {
             if (!CheckImagesFormatUtil.checkImageElement(file.getInputStream(), 100, 100)) {
-                return ResultData.error(WebErrorCodeEnum.USER_INFO_AVATAR_FILE_SIZE_WRONG);
+                // return ResultData.error(WebErrorCodeEnum.USER_INFO_AVATAR_FILE_SIZE_WRONG);
             }
         } catch (IOException e) {
             e.printStackTrace();

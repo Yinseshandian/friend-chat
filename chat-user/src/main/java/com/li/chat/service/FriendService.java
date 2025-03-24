@@ -1,6 +1,9 @@
 package com.li.chat.service;
 
+import com.li.chat.entity.Apply;
 import com.li.chat.entity.Friend;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,4 +23,5 @@ public interface FriendService {
     int deleteById(Long id);
 
     void updateRemark(Long userId, Long friendId, String remark);
+
 }

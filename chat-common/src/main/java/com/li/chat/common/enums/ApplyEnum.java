@@ -11,5 +11,7 @@ public class ApplyEnum {
     public static final Integer STATUS_AGREE = 1;
     // 拒绝
     public static final Integer STATUS_REFUSE = 2;
+    // 忽略
+    public static final Integer STATUS_IGNORE = 3;
 
 }

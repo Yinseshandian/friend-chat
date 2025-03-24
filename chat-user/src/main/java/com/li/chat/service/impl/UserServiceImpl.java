@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -122,7 +119,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public List<User> findAllByIds(List<Long> ids, List<Integer> status) {
+    public List<User> findAllByIds(Collection<Long> ids, Collection<Integer> status) {
         return userRepository.findAllByIdInAndStatusIn(ids, status);
     }
 

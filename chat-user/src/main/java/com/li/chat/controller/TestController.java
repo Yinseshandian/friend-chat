@@ -34,28 +34,17 @@ public class TestController {
         UserDTO userDTO = new UserDTO();
         BeanUtil.copyProperties(user, userDTO);
         List<FriendDTO> list = new LinkedList<>();
-        System.out.println(user.getFriendsU());
-        System.out.println(user.getFriendsF());
-        user.getFriendsU().forEach((f) -> {
-            FriendDTO friendDTO = new FriendDTO();
-            friendDTO.setId(f.getId());
-            friendDTO.setRemark(f.getFriendRemark());
-            friendDTO.setFriendId(f.getFriend().getId());
-            friendDTO.setUserId(f.getUser().getId());
-            friendDTO.setNickname(f.getFriend().getNickname());
-            list.add(friendDTO);
-        });
         return ResultData.success(list);
     }
 
     @GetMapping("/get")
     public ResultData get() {
-        List<Friend> list = friendRepository.findByUserIdOrFriendId(10000L, 10000L);
+        List<Friend> list = friendRepository.findByUserSmallIdOrUserBigId(10000L, 10000L);
         List<FriendDTO> res = new LinkedList<>();
         list.forEach((friend) -> {
             FriendDTO friendDTO = FriendDTO.builder()
                     .id(friend.getId())
-                    .remark(friend.getFriendRemark()).build();
+                    .remark(friend.getUserBigRemark()).build();
             res.add(friendDTO);
         });
 

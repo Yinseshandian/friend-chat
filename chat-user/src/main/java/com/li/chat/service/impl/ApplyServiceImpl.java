@@ -5,9 +5,12 @@ import com.li.chat.entity.Apply;
 import com.li.chat.repository.ApplyRepository;
 import com.li.chat.service.ApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,6 +42,11 @@ public class ApplyServiceImpl implements ApplyService {
     @Override
     public Apply findByIdAndToId(Long id, Long toId) {
         return applyRepository.findByIdAndToId(id, toId);
+    }
+
+    @Override
+    public Page<Apply> applyToMe(Long userId, Pageable pageable) {
+        return  applyRepository.findAllByToId(userId, pageable);
     }
 
 }

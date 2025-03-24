@@ -1,22 +1,16 @@
 package com.li.chat.service.impl;
 
 import cn.hutool.core.util.NumberUtil;
-import com.fhs.jpa.wrapper.LambdaQueryWrapper;
 import com.li.chat.entity.Friend;
 import com.li.chat.entity.User;
 import com.li.chat.repository.FriendRepository;
 import com.li.chat.service.FriendService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.NumberUtils;
-import org.springframework.util.ObjectUtils;
 
 import javax.persistence.criteria.*;
-import javax.persistence.metamodel.MapAttribute;
-import javax.persistence.metamodel.SingularAttribute;
 import java.util.*;
 
 /**
@@ -39,20 +33,20 @@ public class FriendServiceImpl implements FriendService {
             userId = friendId;
             friendId = temp;
         }
-        Friend friend = friendRepository.findByUserIdAndFriendId(userId, friendId);
+        Friend friend = friendRepository.findByUserSmallIdAndUserBigId(userId, friendId);
         return friend != null;
     }
 
     @Override
     public void add(Friend friend) {
-        User u = friend.getUser();
-        User f = friend.getFriend();
+        User u = friend.getUserSmall();
+        User f = friend.getUserBig();
         if (u.getId() > f.getId()) {
-            friend.setUser(f);
-            friend.setFriend(u);
-            String temp = friend.getUserRemark();
-            friend.setUserRemark(friend.getFriendRemark());
-            friend.setFriendRemark(temp);
+            friend.setUserSmall(f);
+            friend.setUserBig(u);
+            String temp = friend.getUserSmallRemark();
+            friend.setUserSmallRemark(friend.getUserBigRemark());
+            friend.setUserBigRemark(temp);
         }
         if (isFriend(u.getId(), f.getId())) {
             return;
@@ -71,8 +65,8 @@ public class FriendServiceImpl implements FriendService {
                 Root<User> join = criteriaQuery.from(User.class);
                 List<Predicate> onList = new ArrayList<>();
                 // userId 和 friendId 都为on条件
-                onList.add(criteriaBuilder.equal(root.get("friend").get("id"), join.get("id")));
-                onList.add(criteriaBuilder.equal(root.get("user").get("id"), join.get("id")));
+                onList.add(criteriaBuilder.equal(root.get("userBig").get("id"), join.get("id")));
+                onList.add(criteriaBuilder.equal(root.get("userSmall").get("id"), join.get("id")));
                 predicates.add(criteriaBuilder.or(onList.toArray(new Predicate[onList.size()])));
 
                 predicates.add(criteriaBuilder.equal(join.get("id"), userId));
@@ -88,25 +82,25 @@ public class FriendServiceImpl implements FriendService {
                     orList.add(criteriaBuilder.like(join.get("nickname"), queryLikeStr));
 
                     // 模糊查询好友备注，并且不是当前用户
-                    Predicate notEqFid = criteriaBuilder.notEqual(root.get("friend").get("id"), userId);
-                    Predicate likeFriendRemark = criteriaBuilder.like(root.get("friendRemark"), queryLikeStr);
+                    Predicate notEqFid = criteriaBuilder.notEqual(root.get("userBig").get("id"), userId);
+                    Predicate likeFriendRemark = criteriaBuilder.like(root.get("userBigRemark"), queryLikeStr);
                     Predicate likeFriendRemarkAndNotEqUserId = criteriaBuilder.and(notEqFid, likeFriendRemark);
 
-                    Predicate notEqUid = criteriaBuilder.notEqual(root.get("user").get("id"), userId);
-                    Predicate likeUserRemark = criteriaBuilder.like(root.get("userRemark"), queryLikeStr);
+                    Predicate notEqUid = criteriaBuilder.notEqual(root.get("userSmall").get("id"), userId);
+                    Predicate likeUserRemark = criteriaBuilder.like(root.get("userSmallRemark"), queryLikeStr);
                     Predicate likeUserRemarkAndNotEqFriendId = criteriaBuilder.and(notEqUid, likeUserRemark);
 
                     orList.add(criteriaBuilder.or(likeFriendRemarkAndNotEqUserId, likeUserRemarkAndNotEqFriendId));
 
                     if (NumberUtil.isNumber(q)) {
                         // 模糊查询好友id，并且好友不是自己
-                        Predicate likeUserId = criteriaBuilder.like(root.get("user").get("id").as(String.class), queryLikeStr);
+                        Predicate likeUserId = criteriaBuilder.like(root.get("userSmall").get("id").as(String.class), queryLikeStr);
                         Predicate likeUserIdAndNotEqUid = criteriaBuilder.and(likeUserId, notEqUid);
 
-                        Predicate LikeFriendId = criteriaBuilder.like(root.get("friend").get("id").as(String.class), queryLikeStr);
-                        Predicate LikeFriendIdAndNotEqFid = criteriaBuilder.and(LikeFriendId, notEqFid);
+                        Predicate likeFriendId = criteriaBuilder.like(root.get("userBig").get("id").as(String.class), queryLikeStr);
+                        Predicate likeFriendIdAndNotEqFid = criteriaBuilder.and(likeFriendId, notEqFid);
 
-                        orList.add(criteriaBuilder.or(likeUserIdAndNotEqUid, LikeFriendIdAndNotEqFid));
+                        orList.add(criteriaBuilder.or(likeUserIdAndNotEqUid, likeFriendIdAndNotEqFid));
                     }
                     predicates.add(criteriaBuilder.or(orList.toArray(new Predicate[orList.size()])));
                 }
@@ -116,15 +110,15 @@ public class FriendServiceImpl implements FriendService {
         List<Friend> friendList = friendRepository.findAll(specification);
         friendList.forEach((f) -> {
             // 让当前用户总是在数据的user位置
-            if (Objects.equals(userId, f.getFriend().getId())) {
+            if (Objects.equals(userId, f.getUserBig().getId())) {
                 // 替换好友信息
-                User tFriend = f.getFriend();
-                f.setFriend(f.getUser());
-                f.setUser(tFriend);
+                User tFriend = f.getUserBig();
+                f.setUserBig(f.getUserSmall());
+                f.setUserSmall(tFriend);
                 // 替换好友备注
-                String tRemark = f.getFriendRemark();
-                f.setFriendRemark(f.getUserRemark());
-                f.setUserRemark(tRemark);
+                String tRemark = f.getUserBigRemark();
+                f.setUserBigRemark(f.getUserSmallRemark());
+                f.setUserSmallRemark(tRemark);
             }
         });
         return friendList;
@@ -139,19 +133,11 @@ public class FriendServiceImpl implements FriendService {
             userId = friendId;
             friendId = temp;
         }
-        Friend friend = friendRepository.findByUserIdAndFriendId(userId, friendId);
+        Friend friend = friendRepository.findByUserSmallIdAndUserBigId(userId, friendId);
         if (friend == null) {
             return null;
         }
-        if (!Objects.equals(tUserId, friend.getUser().getId())) {
-            User tFriend = friend.getFriend();
-            friend.setFriend(friend.getUser());
-            friend.setUser(tFriend);
-            // 替换好友备注
-            String tRemark = friend.getFriendRemark();
-            friend.setFriendRemark(friend.getUserRemark());
-            friend.setUserRemark(tRemark);
-        }
+
         return friend;
     }
 
@@ -170,11 +156,11 @@ public class FriendServiceImpl implements FriendService {
         Friend friend = friendInfo(userId, friendId);
 
         if (userId < friendId) {
-            // 小于时 user 对应的好友 注释为 friendRemark
-            friend.setFriendRemark(remark);
+            // 小于时，用户为userSmall，好友为userBig
+            friend.setUserBigRemark(remark);
         }else {
-            // 大于时 friend 对应的好友 注释为 userRemark
-            friend.setUserRemark(remark);
+            // 大于时，用户为userBig，好友为userSmall
+            friend.setUserSmallRemark(remark);
         }
         friendRepository.save(friend);
     }

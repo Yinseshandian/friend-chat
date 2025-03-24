@@ -38,7 +38,7 @@ public interface FriendFeign {
      */
     @GetMapping("/list")
     List<FriendDTO> list(@RequestParam("userId")Long userId,
-                         @RequestParam(value = "q", required = false) String q);
+                                @RequestParam(value = "q", required = false) String q);
 
     /**
      * 好友详情
@@ -67,5 +67,5 @@ public interface FriendFeign {
     @PutMapping("/remark")
     void updateRemark(@RequestParam("userId") Long userId,
                       @RequestParam("friendId") Long friendId,
-                      @RequestParam("remark") String remark);
+                      @RequestParam(value = "remark" ,required = false) String remark);
 }

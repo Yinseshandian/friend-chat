@@ -10,6 +10,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,7 +95,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/findAllUnDelByIds")
-    public List<UserDTO> findAllUnDelByIds(@RequestParam("ids") List<Long> ids) {
+    public List<UserDTO> findAllUnDelByIds(@RequestParam("ids") Collection<Long> ids) {
         List<User> userList = userService.findAllByIds(ids, Arrays.asList(UserEnum.STATUS_OK, UserEnum.STATUS_FREEZE));
         return userList.stream().map(v -> {
             UserDTO userDTO = new UserDTO();

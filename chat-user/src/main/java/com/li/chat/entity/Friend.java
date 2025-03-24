@@ -28,15 +28,15 @@ public class Friend extends BaseEntity {
     // // 程序层面控制 userId < friendId
     // private Long friendId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id",foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private User user;
+    @JoinColumn(name = "user_small_id", referencedColumnName = "id",foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private User userSmall;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "friend_id", referencedColumnName = "id",foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private User friend;
-    // 用户的备注 firend为当前用户 他的好友 user 的备注
-    private String userRemark;
-    // 好友的备注 user为当前用户 他的好友 friend 的备注
-    private String friendRemark;
+    @JoinColumn(name = "user_big_id", referencedColumnName = "id",foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private User userBig;
+
+    private String userSmallRemark;
+
+    private String userBigRemark;
 
 }

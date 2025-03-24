@@ -40,68 +40,11 @@ public class FriendController {
 
     private final FriendFeign friendFeign;
 
-    @Autowired
-    private final UserFeign userFeign;
 
-    private final ApplyFeign applyFeign;
-
-    public FriendController(FriendFeign friendFeign, UserFeign userFeign, ApplyFeign applyFeign) {
+    public FriendController(FriendFeign friendFeign) {
         this.friendFeign = friendFeign;
-        this.userFeign = userFeign;
-        this.applyFeign = applyFeign;
     }
 
-    @ApiOperation("申请好友")
-    @GlobalTransactional
-    @PostMapping("/apply")
-    public ResultData apply(@RequestBody @Valid FriendApplyParam userApplyParam) {
-        Long fromId = RequestContext.getUserId();
-        Long toId = userApplyParam.getToId();
-        UserDTO toUser = userFeign.findUserById(toId);
-        // 未找到用户
-        if (ObjectUtil.isEmpty(toUser)) {
-            return ResultData.error(WebErrorCodeEnum.USER_FRIEND_USER_NOT_FOUND);
-        }
-        FriendDTO friend = friendFeign.info(fromId, toId);
-        if (ObjectUtil.isNotEmpty(friend)) {
-            return ResultData.error(WebErrorCodeEnum.USER_FRIEND_ALREADY_IS_FRIEND);
-        }
-        ApplyDTO applyDTO = new ApplyDTO();
-        applyDTO.setFromId(fromId);
-        BeanUtil.copyProperties(userApplyParam, applyDTO);
-        // 没有备注默认使用 用户nickname
-        if (StringUtils.isEmpty(userApplyParam.getRemark())) {
-            applyDTO.setRemark(toUser.getNickname());
-        }
-        applyFeign.apply(applyDTO);
-        // TODO 发送消息让用户刷新申请列表
-        return ResultData.success();
-    }
-
-    @ApiOperation("同意好友申请")
-    @GlobalTransactional
-    @PutMapping("/agree")
-    public ResultData agree(@Valid @RequestBody FriendAgreeParam param) {
-        Long toId = RequestContext.getUserId();
-        ApplyDTO applyDTO = applyFeign.findByIdAndToId(param.getId(), toId);
-        // 未找到
-        if (ObjectUtils.isEmpty(applyDTO)) {
-            return ResultData.error(WebErrorCodeEnum.USER_FRIEND_APPLY_NO_FOUND);
-        }
-        // 已处理
-        if (!ApplyEnum.STATUS_UNTREATED.equals(applyDTO.getStatus())) {
-            return ResultData.error(WebErrorCodeEnum.USER_FRIEND_APPLY_FINISH);
-        }
-        String remark = param.getRemark();
-        // 备注为空使用 用户nickname
-        if (StringUtils.isEmpty(remark)) {
-            UserDTO user = userFeign.findUserById(applyDTO.getFromId());
-            remark = user.getNickname();
-        }
-        applyFeign.agree(param.getId(), remark);
-        log.info("用户[{}]同意添加好友[{}]", applyDTO.getToId(), applyDTO.getFromId());
-        return ResultData.success();
-    }
 
     @ApiOperation("好友列表")
     @GetMapping("/myFriends")

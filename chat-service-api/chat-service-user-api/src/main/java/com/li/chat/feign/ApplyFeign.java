@@ -1,7 +1,10 @@
 package com.li.chat.feign;
 
+import com.li.chat.common.param.PageParam;
+import com.li.chat.common.utils.PageResultData;
 import com.li.chat.domain.DTO.ApplyDTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -35,4 +38,13 @@ public interface ApplyFeign {
      */
     @GetMapping("/agree")
     void agree(@RequestParam("id") Long id, @RequestParam(value = "toRemark", required = false) String toRemark);
+
+    /**
+     * 列表
+     * @param userId
+     * @param pageParam
+     * @return
+     */
+    @GetMapping("/applyToMe")
+    PageResultData<ApplyDTO> applyToMe(@RequestParam("userId") Long userId, @SpringQueryMap PageParam pageParam);
 }
