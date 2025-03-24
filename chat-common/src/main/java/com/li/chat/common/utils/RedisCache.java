@@ -1,10 +1,8 @@
 package com.li.chat.common.utils;
 
+import org.checkerframework.checker.units.qual.K;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.BoundSetOperations;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -75,6 +73,11 @@ public class RedisCache {
         return operation.get(key);
     }
 
+    public boolean hasKey(String key) {
+        return redisTemplate.hasKey(key);
+    }
+
+
     /**
      * 删除单个对象
      *
@@ -116,6 +119,10 @@ public class RedisCache {
         return redisTemplate.opsForList().range(key, 0, -1);
     }
 
+    public ListOperations getListOperations(final String key) {
+        return redisTemplate.opsForList();
+    }
+
     /**
      * 缓存Set
      *
@@ -140,6 +147,10 @@ public class RedisCache {
      */
     public <T> Set<T> getCacheSet(final String key) {
         return redisTemplate.opsForSet().members(key);
+    }
+
+    public Long addToSet(final String key, Object... o) {
+        return redisTemplate.opsForSet().add(key, o);
     }
 
     /**

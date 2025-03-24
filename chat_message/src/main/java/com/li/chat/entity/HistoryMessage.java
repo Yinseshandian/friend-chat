@@ -16,7 +16,6 @@ import javax.persistence.*;
 public class HistoryMessage extends BaseEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long fromId;

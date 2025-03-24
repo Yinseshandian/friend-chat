@@ -14,7 +14,7 @@ server:
     uri-encoding: UTF-8
 spring:
   application:
-    name: chat-base
+    name: netty-login
 
   cloud:
     nacos:
@@ -32,3 +32,18 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+
+seata:
+  application-id: serverAddr
+  tx-service-group: friend-chat-tx-group
+
+  registry:
+    type: nacos
+    nacos:
+      server-addr: ${spring.cloud.nacos.discovery.server-addr}
+
+friend-chat:
+  message:
+    offline:
+      expired: 7
+      timeunit: DAYS

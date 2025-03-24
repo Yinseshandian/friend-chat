@@ -44,4 +44,11 @@ public interface GroupManagementFeign {
      */
     @DeleteMapping("/deleteById")
     int deleteById(@RequestParam("id") Long id);
+
+    /**
+     * 更新
+     * @param groupDTO
+     */
+    @PutMapping("/update")
+    void update(@RequestBody GroupDTO groupDTO);
 }
