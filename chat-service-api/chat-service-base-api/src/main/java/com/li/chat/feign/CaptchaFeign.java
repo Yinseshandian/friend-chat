@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author malaka
  */
 @FeignClient(name = "chat-base", contextId = "captcha")
-@RequestMapping("/captcha")
+@RequestMapping("/chat-base/captcha")
 public interface CaptchaFeign {
 
     /**

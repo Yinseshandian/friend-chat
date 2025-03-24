@@ -12,7 +12,7 @@ import java.io.IOException;
  * @author malaka
  */
 @RestController
-@RequestMapping("/captcha")
+@RequestMapping("/chat-base/captcha")
 public class CaptchaController {
 
     @Autowired

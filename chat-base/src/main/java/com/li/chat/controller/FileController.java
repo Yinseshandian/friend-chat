@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping(value = "/file")
+@RequestMapping(value = "/chat-base/file")
 public class FileController {
 
 

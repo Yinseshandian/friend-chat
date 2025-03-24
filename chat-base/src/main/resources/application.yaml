@@ -23,7 +23,7 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
 minio:
-  endpoint: http://127.0.0.1:9000 #Minio服务所在地址
+  endpoint: http://192.168.1.151:9000 #Minio服务所在地址
   bucketName: friendchat #存储桶名称
   access-key: Gv8exgw817ApcD90 #访问的key
   secret-key: b2u3UrLcltGm2F9xJGAiueIRJNjNMWOL #访问的秘钥

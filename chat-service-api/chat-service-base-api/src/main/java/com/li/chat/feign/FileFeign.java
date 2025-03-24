@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @FeignClient(name = "chat-base",
         contextId = "file",
         configuration = FeignMultipartSupportConfig.class)
-@RequestMapping("/file")
+@RequestMapping("/chat-base/file")
 public interface FileFeign {
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
