@@ -2,6 +2,8 @@ package com.li.chat.repository;
 
 import com.li.chat.entity.Group;
 import com.li.chat.entity.GroupApply;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -37,11 +39,9 @@ public interface GroupApplyRepository extends JpaRepository<GroupApply, Long>, J
     /**
      * 查找群组的申请
      * @param groupIdList
-     * @param status
-     * @param type
      * @return
      */
-    List<GroupApply> findAllByGroupIdInAndStatusAndType(List<Long> groupIdList, Integer status, Integer type);
+    Page<GroupApply> findAllByGroupIdIn(List<Long> groupIdList, Pageable pageable);
 
     /**
      * 通过群号删除

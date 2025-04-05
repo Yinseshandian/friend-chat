@@ -21,6 +21,7 @@ import io.seata.spring.annotation.GlobalTransactional;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -123,11 +124,11 @@ public class ApplyController {
         resultData.setPageSize(param.getPageSize());
         resultData.setTotal(applyDTOs.getTotal());
         resultData.setRows(resList);
-        resultData.setCode(200);
+        resultData.setCode(HttpStatus.OK.value());
         return resultData;
     }
 
-    @ApiOperation("好友申请列表")
+    @ApiOperation("好友申请详情")
     @GlobalTransactional
     @GetMapping("/{id}")
     public ResultData<ApplyVo> applyInfo(@PathVariable("id") Long id) {

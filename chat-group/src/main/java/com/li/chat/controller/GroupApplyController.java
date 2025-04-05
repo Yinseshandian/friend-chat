@@ -1,12 +1,19 @@
 package com.li.chat.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.li.chat.common.param.PageParam;
+import com.li.chat.common.utils.PageResultData;
 import com.li.chat.domain.DTO.GroupApplyDTO;
 import com.li.chat.domain.DTO.GroupDTO;
 import com.li.chat.entity.Group;
 import com.li.chat.entity.GroupApply;
 import com.li.chat.service.GroupApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -87,15 +94,25 @@ public class GroupApplyController {
      * @return
      */
     @GetMapping("/findGroupApplyByUserId")
-    public List<GroupApplyDTO> findGroupApplyByUserId(@RequestParam("userId") Long userId) {
-        List<GroupApply> groupApplyList = groupApplyService.findGroupApplyByUserId(userId);
+    public PageResultData<GroupApplyDTO> findGroupApplyByUserId(@RequestParam("userId") Long userId, @SpringQueryMap PageParam pageParam) {
+        int pageNum = pageParam.getPageNum();
+        int pageSize = pageParam.getPageSize();
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize,
+                Sort.by("status").ascending()
+                        .and(Sort.by("id").descending())
+        );
+        Page<GroupApply> groupApplyList = groupApplyService.findGroupApplyByUserId(userId, pageable);
         List<GroupApplyDTO> groupApplyDTOList = new ArrayList<>();
         for (GroupApply groupApply : groupApplyList) {
             GroupApplyDTO groupApplyDTO = new GroupApplyDTO();
             BeanUtil.copyProperties(groupApply, groupApplyDTO);
             groupApplyDTOList.add(groupApplyDTO);
         }
-        return groupApplyDTOList;
+        return PageResultData.<GroupApplyDTO>builder()
+                .total(groupApplyList.getTotalElements())
+                .rows(groupApplyDTOList)
+                .pageSize(pageSize)
+                .pageNum(pageNum).build();
     }
 
 }

@@ -1,7 +1,10 @@
 package com.li.chat.feign;
 
+import com.li.chat.common.param.PageParam;
+import com.li.chat.common.utils.PageResultData;
 import com.li.chat.domain.DTO.GroupDTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,4 +54,13 @@ public interface GroupManagementFeign {
      */
     @PutMapping("/update")
     void update(@RequestBody GroupDTO groupDTO);
+
+    /**
+     * 名字模糊查询
+     * @param name
+     * @param pageParam
+     * @return
+     */
+    @GetMapping("/findByName")
+    PageResultData<GroupDTO> findByName(@RequestParam("name") String name, @SpringQueryMap PageParam pageParam);
 }

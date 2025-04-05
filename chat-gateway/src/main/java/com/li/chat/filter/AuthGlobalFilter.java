@@ -98,7 +98,7 @@ public class AuthGlobalFilter implements GlobalFilter {
     // 返回401未授权响应
     private Mono<Void> unauthorizedResponse(ServerWebExchange exchange) {
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        response.setStatusCode(HttpStatus.OK);
         response.getHeaders().add("Content-Type", "application/json");
         String body = "{\"code\": 401, \"message\": \"登录过期，请登录\"}";
         DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(StandardCharsets.UTF_8));

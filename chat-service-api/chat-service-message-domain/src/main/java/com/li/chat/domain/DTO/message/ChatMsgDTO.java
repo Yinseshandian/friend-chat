@@ -1,6 +1,7 @@
 package com.li.chat.domain.DTO.message;
 
 import lombok.Data;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true) // 链式调用
+@ToString
 public class ChatMsgDTO {
 
     private static final long serialVersionUID = 1L;

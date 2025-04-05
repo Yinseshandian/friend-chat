@@ -93,7 +93,10 @@ public class ApplyController {
     public PageResultData<ApplyDTO> applyToMe(@RequestParam("userId") Long userId, @SpringQueryMap PageParam pageParam) {
         int pageNum = pageParam.getPageNum();
         int pageSize = pageParam.getPageSize();
-        Pageable pageable = PageRequest.of(pageNum - 1, pageSize, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize,
+                Sort.by("status").ascending()
+                .and(Sort.by("id").descending())
+        );
         Page<Apply> applyPage = applyService.applyToMe(userId, pageable);
         List<ApplyDTO> applyDTOList = new ArrayList<>();
         applyPage.forEach(v -> {

@@ -5,6 +5,8 @@ import com.li.chat.common.enums.GroupApplyEnum;
 import com.li.chat.common.enums.GroupJoinModeEnum;
 import com.li.chat.common.enums.GroupMemberTypeEnum;
 import com.li.chat.common.enums.WebErrorCodeEnum;
+import com.li.chat.common.param.PageParam;
+import com.li.chat.common.utils.PageResultData;
 import com.li.chat.common.utils.RequestContext;
 import com.li.chat.common.utils.ResultData;
 import com.li.chat.domain.DTO.GroupApplyDTO;
@@ -168,9 +170,9 @@ public class GroupApplyController {
 
     @ApiOperation(value = "用户管理的群组申请列表")
     @GetMapping("/myGroupApply")
-    public ResultData myGroupApply() {
+    public ResultData myGroupApply(PageParam param) {
         Long userId = RequestContext.getUserId();
-        List<GroupApplyDTO> applyDTOList = groupApplyFeign.findGroupApplyByUserId(userId);
+        PageResultData<GroupApplyDTO> applyDTOList = groupApplyFeign.findGroupApplyByUserId(userId, param);
         return ResultData.success(applyDTOList);
     }
 

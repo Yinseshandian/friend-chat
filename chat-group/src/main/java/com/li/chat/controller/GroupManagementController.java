@@ -1,15 +1,23 @@
 package com.li.chat.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.li.chat.common.param.PageParam;
+import com.li.chat.common.utils.PageResultData;
 import com.li.chat.domain.DTO.GroupDTO;
 import com.li.chat.entity.Group;
 import com.li.chat.service.GroupApplyService;
 import com.li.chat.service.GroupManagementService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +94,26 @@ public class GroupManagementController {
         Group group = new Group();
         BeanUtils.copyProperties(groupDTO, group);
         groupManagementService.update(group);
+    }
+
+    @GetMapping("/findByName")
+    public PageResultData<GroupDTO> findByName(@RequestParam("name") String name, @SpringQueryMap PageParam pageParam) {
+        int pageNum = pageParam.getPageNum();
+        int pageSize = pageParam.getPageSize();
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+        Page<Group> applyPage = groupManagementService.findAllOpenByNameLike(name, pageable);
+        List<GroupDTO> groupDTOList = new ArrayList<>();
+        applyPage.forEach(v -> {
+            GroupDTO groupDTO = new GroupDTO();
+            BeanUtils.copyProperties(v, groupDTO);
+            groupDTOList.add(groupDTO);
+
+        });
+        return PageResultData.<GroupDTO>builder()
+                .total(applyPage.getTotalElements())
+                .rows(groupDTOList)
+                .pageSize(pageSize)
+                .pageNum(pageNum).build();
     }
 
 }

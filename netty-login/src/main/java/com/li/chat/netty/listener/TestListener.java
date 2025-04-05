@@ -6,6 +6,8 @@ import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.corundumstudio.socketio.annotation.OnEvent;
 import com.li.chat.common.utils.RedisCache;
+import com.li.chat.domain.DTO.FriendDTO;
+import com.li.chat.feign.FriendFeign;
 import com.li.chat.feign.UserFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ import java.util.UUID;
 /**
  * @author malaka
  */
-@Component
+// @Component
 @Slf4j
 public class TestListener  {
 
@@ -33,13 +35,15 @@ public class TestListener  {
     @Autowired
     private UserFeign userFeign;
 
+    @Autowired
+    private FriendFeign friendFeign;
+
     Map<Long, UUID> idToUUID = new HashMap<>();
     Map<UUID, Long> UUIDToId = new HashMap<>();
 
     @OnConnect
     public void eventOnConnect(SocketIOClient client) {
         Map<String, List<String>> urlParams = client.getHandshakeData().getUrlParams();
-        System.out.println("客户端唯一标识为：" + client.getSessionId());
         log.info("链接开启，urlParams：{}", urlParams);
     }
 
@@ -71,6 +75,9 @@ public class TestListener  {
             client.sendEvent("onlineResponse", "loginToken错误");
             return;
         }
+
+        List<FriendDTO> friendList = friendFeign.list(uid, null);
+
         UUID sessionId = client.getSessionId();
         log.info("goOnline ---> 用户：{} 上线，UUID：{}", uid, sessionId);
         idToUUID.put(uid, sessionId);

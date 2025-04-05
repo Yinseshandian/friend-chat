@@ -15,6 +15,8 @@ public class SendVo {
 
     private Long userId;
 
+    private Long fromId;
+
     private PushMsgTypeEnum msgType;
 
     private String content;

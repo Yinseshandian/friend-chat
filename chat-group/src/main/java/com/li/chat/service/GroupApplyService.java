@@ -3,6 +3,8 @@ package com.li.chat.service;
 import com.li.chat.domain.DTO.GroupApplyDTO;
 import com.li.chat.entity.Group;
 import com.li.chat.entity.GroupApply;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -42,7 +44,7 @@ public interface GroupApplyService {
      * @param userId
      * @return
      */
-    List<GroupApply> findGroupApplyByUserId(Long userId);
+    Page<GroupApply> findGroupApplyByUserId(Long userId, Pageable pageable);
 
 
 }

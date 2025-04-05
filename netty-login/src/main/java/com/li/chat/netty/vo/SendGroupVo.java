@@ -11,6 +11,8 @@ public class SendGroupVo {
 
     private Long groupId;
 
+    private Long fromId;
+
     private PushMsgTypeEnum msgType;
 
     private String content;

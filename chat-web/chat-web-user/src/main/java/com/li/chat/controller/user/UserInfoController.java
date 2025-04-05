@@ -1,8 +1,12 @@
 package com.li.chat.controller.user;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.google.common.base.Objects;
 import com.li.chat.annotation.MyApiResult;
 import com.li.chat.common.enums.WebErrorCodeEnum;
+import com.li.chat.common.param.PageParam;
+import com.li.chat.common.utils.PageResultData;
+import com.li.chat.domain.DTO.GroupDTO;
 import com.li.chat.domain.DTO.UserDTO;
 import com.li.chat.common.utils.CheckImagesFormatUtil;
 import com.li.chat.common.utils.RequestContext;
@@ -17,6 +21,7 @@ import io.seata.spring.annotation.GlobalTransactional;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,6 +97,19 @@ public class UserInfoController {
                 .build()
         );
     }
+
+    @ApiOperation(value = "用户名查询用户")
+    @GetMapping("/search")
+    public ResultData search(@RequestParam("username") String username) {
+        UserDTO userDTO = userFeign.findByUsername(username);
+        Long userId = RequestContext.getUserId();
+        // 移除当前用户
+        if (ObjectUtil.equal(userId, userDTO)) {
+            return ResultData.success();
+        }
+        return ResultData.success(userDTO);
+    }
+
 
     @ApiOperation("更改用户信息")
     @GlobalTransactional

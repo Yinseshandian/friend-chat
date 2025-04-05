@@ -19,6 +19,8 @@
         <module>chat-service-group-domain</module>
         <module>chat-service-group-api</module>
         <module>chat-service-message-domain</module>
+        <module>chat-service-admin-api</module>
+        <module>chat-service-admin-domain</module>
     </modules>
 
     <dependencies>

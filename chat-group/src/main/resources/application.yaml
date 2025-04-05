@@ -38,11 +38,20 @@ spring:
         format_sql: true
     open-in-view: true
 
-
   cloud:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+logging:
+  level:
+    org.springframework.security:
+      - debug
+      - info
+    org.springframework.web: error
+    org.hibernate.SQL: debug
+    org.hibernate.engine.QueryParameters: debug
+    org.hibernate.engine.query.HQLQueryPlan: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
 
 seata:
   application-id: serverAddr

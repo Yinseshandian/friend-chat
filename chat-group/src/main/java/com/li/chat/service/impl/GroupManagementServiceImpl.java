@@ -1,5 +1,8 @@
 package com.li.chat.service.impl;
 
+import cn.hutool.core.collection.ListUtil;
+import com.google.common.collect.Lists;
+import com.li.chat.common.enums.GroupJoinModeEnum;
 import com.li.chat.entity.Group;
 import com.li.chat.entity.GroupMember;
 import com.li.chat.repository.GroupApplyRepository;
@@ -9,6 +12,8 @@ import com.li.chat.service.GroupApplyService;
 import com.li.chat.service.GroupManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
@@ -102,6 +107,11 @@ public class GroupManagementServiceImpl implements GroupManagementService {
     @Override
     public void update(Group group) {
         groupManagementRepository.save(group);
+    }
+
+    @Override
+    public Page<Group> findAllOpenByNameLike(String name, Pageable pageable) {
+        return groupManagementRepository.findAllByNameLikeAndJoinModeIn("%" + name + "%", ListUtil.of(GroupJoinModeEnum.MODE_OPEN, GroupJoinModeEnum.MODE_VERIFY), pageable);
     }
 
 

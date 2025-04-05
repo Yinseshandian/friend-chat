@@ -6,7 +6,9 @@ import com.li.chat.common.enums.GroupApplyEnum;
 import com.li.chat.common.enums.GroupJoinModeEnum;
 import com.li.chat.common.enums.GroupMemberTypeEnum;
 import com.li.chat.common.enums.WebErrorCodeEnum;
+import com.li.chat.common.param.PageParam;
 import com.li.chat.common.utils.DefaultGroupParam;
+import com.li.chat.common.utils.PageResultData;
 import com.li.chat.common.utils.RequestContext;
 import com.li.chat.common.utils.ResultData;
 import com.li.chat.domain.DTO.GroupApplyDTO;
@@ -22,6 +24,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -126,6 +129,14 @@ public class GroupManagementController {
 
         return ResultData.success();
     }
-    
+
+    @ApiOperation(value = "名字查询群组")
+    @GetMapping("/search")
+    public PageResultData myGroupApply(@RequestParam("s") String s, PageParam param) {
+        Long userId = RequestContext.getUserId();
+        PageResultData<GroupDTO> pageResultData = groupManagementFeign.findByName(s, param);
+        pageResultData.setCode(HttpStatus.OK.value());
+        return pageResultData;
+    }
 
 }

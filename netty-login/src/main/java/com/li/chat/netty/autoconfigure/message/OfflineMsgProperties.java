@@ -1,4 +1,4 @@
-package com.li.chat.netty.config;
+package com.li.chat.netty.autoconfigure.message;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 @ConfigurationProperties("friend-chat.message.offline")
 @Getter
 @Setter
-public class OfflineMsgConfig {
+public class OfflineMsgProperties {
 
     private int expired;
 

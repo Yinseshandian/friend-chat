@@ -1,8 +1,11 @@
 package com.li.chat.feign;
 
+import com.li.chat.common.param.PageParam;
+import com.li.chat.common.utils.PageResultData;
 import com.li.chat.domain.DTO.GroupApplyDTO;
 import com.li.chat.domain.DTO.GroupDTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,5 +53,5 @@ public interface GroupApplyFeign {
      * @return
      */
     @GetMapping("/findGroupApplyByUserId")
-    List<GroupApplyDTO> findGroupApplyByUserId(@RequestParam("userId") Long userId);
+    PageResultData<GroupApplyDTO> findGroupApplyByUserId(@RequestParam("userId") Long userId, @SpringQueryMap PageParam pageParam);
 }

@@ -15,7 +15,10 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "chat_group")
+@Table(name = "chat_group",
+        indexes = {
+                @Index(columnList = "name")
+        })
 public class Group extends BaseEntity{
 
     @Id

@@ -10,6 +10,8 @@ import com.li.chat.repository.GroupMemberRepository;
 import com.li.chat.service.GroupApplyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -101,11 +103,10 @@ public class GroupApplyServiceImpl implements GroupApplyService {
      * @return
      */
     @Override
-    public List<GroupApply> findGroupApplyByUserId(Long userId) {
+    public Page<GroupApply> findGroupApplyByUserId(Long userId, Pageable pageable) {
         // 查找用户管理群组id
         List<Long> manageGroupIdList = groupMemberRepository.findGroupIdByUserIdAndType(userId, Arrays.asList(GroupMemberTypeEnum.TYPE_MANAGER, GroupMemberTypeEnum.TYPE_MASTER));
-        List<GroupApply> applyList = groupApplyRepository.findAllByGroupIdInAndStatusAndType(manageGroupIdList, GroupApplyEnum.STATUS_UNTREATED, GroupApplyEnum.TYPE_APPLY);
-        return applyList;
+        return groupApplyRepository.findAllByGroupIdIn(manageGroupIdList, pageable);
     }
 
 
