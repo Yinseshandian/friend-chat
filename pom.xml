@@ -13,6 +13,8 @@
         <module>chat-web</module>
         <module>chat-base</module>
         <module>netty-login</module>
+        <module>chat-admin</module>
+        <module>chat-admin-gateway</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -36,6 +38,8 @@
         <lombok.version>1.18.10</lombok.version>
         <mysql.version>5.1.49</mysql.version>
         <spring.cloud.alibaba.version>2.2.0.RELEASE</spring.cloud.alibaba.version>
+        <rocketmq.spring.version>2.0.2</rocketmq.spring.version>
+        <druid.starter.vertion>1.2.8</druid.starter.vertion>
     </properties>
 
     <dependencies>
@@ -49,10 +53,17 @@
 
     <dependencyManagement>
         <dependencies>
+
             <dependency>
                 <artifactId>chat</artifactId>
                 <groupId>com.li</groupId>
                 <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <!--druid -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.starter.vertion}</version>
             </dependency>
             <!--spring cloud Hoxton.SR1-->
             <dependency>
@@ -90,7 +101,11 @@
                 <version>${log4j.version}</version>
             </dependency>
 
-
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq.spring.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>

@@ -5,6 +5,10 @@ package com.li.chat.common.enums;
  */
 public class RedisCachePrefixEnum {
 
+    public static final String ADMIN_AUTH_LOGIN_TOKEN_TO_ID = "ADMIN:AUTH_LOGIN_TOKEN_TO_ID:";
+
+    public static final String ADMIN_AUTH_LOGIN_ID_TO_TOKEN = "ADMIN:AUTH_LOGIN_ID_TO_TOKEN:";
+
     public static final String USER_AUTH_LOGIN_TOKEN_TO_ID = "USER:AUTH_LOGIN_TOKEN_TO_ID:";
 
     public static final String USER_AUTH_LOGIN_ID_TO_TOKEN = "USER:AUTH_LOGIN_ID_TO_TOKEN:";
