@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * @author malaka
  */
@@ -26,8 +28,10 @@ public class GroupApplyDTO {
 
     private String message;
 
-    private Integer type; // 类型 0用户申请 1群成员邀请
+    private Integer type; // 类型   1群成员邀请
 
     private Integer status; // 申请状态 0未处理 1同意 2拒绝
+
+    private LocalDateTime createTime;
 
 }

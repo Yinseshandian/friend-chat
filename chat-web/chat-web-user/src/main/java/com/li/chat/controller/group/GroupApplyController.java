@@ -161,6 +161,7 @@ public class GroupApplyController {
                     .type(GroupMemberTypeEnum.TYPE_MEMBER)
                     .build();
             groupMemberFeign.create(member);
+            applyDTO.setProcessedBy(userId);
             groupApplyFeign.agreeApply(applyDTO);
         }else {
             return ResultData.error(WebErrorCodeEnum.GROUP_APPLY_NOT_MANAGER);

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author malaka
@@ -88,6 +89,13 @@ public class GroupApplyController {
         groupApplyService.agreeApply(groupApply);
     }
 
+    @PutMapping("/update")
+    public void update(@RequestBody GroupApplyDTO applyDTO) {
+        GroupApply groupApply = new GroupApply();
+        BeanUtil.copyProperties(applyDTO, groupApply);
+        groupApplyService.update(groupApply);
+    }
+
     /**
      * 查询用户管理群组的申请
      * @param userId
@@ -111,6 +119,25 @@ public class GroupApplyController {
         return PageResultData.<GroupApplyDTO>builder()
                 .total(groupApplyList.getTotalElements())
                 .rows(groupApplyDTOList)
+                .pageSize(pageSize)
+                .pageNum(pageNum).build();
+    }
+
+    @GetMapping("/search")
+    PageResultData<GroupApplyDTO> search(@SpringQueryMap GroupApplyDTO groupApplyDTO,
+                                         @RequestParam("pageNum") int pageNum,
+                                         @RequestParam("pageSize") int pageSize) {
+        PageParam pageParam = PageParam.builder().pageNum(pageNum).pageSize(pageSize).build();
+        Page<GroupApply> page = groupApplyService.findByGroupApplyDTO(groupApplyDTO, pageParam);
+        List<GroupApplyDTO> list = page.stream().map(v -> {
+            GroupApplyDTO dto = GroupApplyDTO.builder().build();
+            BeanUtil.copyProperties(v, dto);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageResultData.<GroupApplyDTO>builder()
+                .total(page.getTotalElements())
+                .rows(list)
                 .pageSize(pageSize)
                 .pageNum(pageNum).build();
     }

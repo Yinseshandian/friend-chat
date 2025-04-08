@@ -37,9 +37,13 @@ public class FriendDTO {
     // 后台用
     private String userRemark;
 
+    private String userAvatar;
+
     private String userUsername;
 
     private String friendRemark;
+
+    private String friendAvatar;
 
     private String friendUsername;
 

@@ -58,7 +58,7 @@ public class GroupManagementController {
                 .name(param.getName())
                 .joinMode(param.getJoinMode())
                 .memberSize(DefaultGroupParam.DEFAULT_GROUP_MEMBER_SIZE)
-                .memberNum(1)
+                .memberNum(0)
                 .holderUserId(userId)
                 // 默认头像
                 .photo("http://127.0.0.1:9000/friendchat/group-avatar/group.jpg")

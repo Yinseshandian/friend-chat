@@ -45,10 +45,13 @@ public class PermissionController {
     @GlobalTransactional
     @RequiresPermission(value = "system:permission:add", message = "没有创建权限的权限")
     public ResultData create(@Valid @RequestBody PermissionCreateParam param) {
+        PermissionDTO byCode = permissionFeign.getByCode(param.getCode());
+        if (byCode != null) {
+            return ResultData.error("权限代码已存在");
+        }
         PermissionDTO permissionDTO = new PermissionDTO();
         BeanUtils.copyProperties(param, permissionDTO);
         permissionDTO.setStatus(true);
-
         Long permissionId = permissionFeign.save(permissionDTO);
 
         return ResultData.success().put("permissionId", permissionId);

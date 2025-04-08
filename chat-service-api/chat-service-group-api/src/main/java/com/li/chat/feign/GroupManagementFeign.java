@@ -63,4 +63,7 @@ public interface GroupManagementFeign {
      */
     @GetMapping("/findByName")
     PageResultData<GroupDTO> findByName(@RequestParam("name") String name, @SpringQueryMap PageParam pageParam);
+
+    @GetMapping("/search")
+    PageResultData<GroupDTO> search(@SpringQueryMap GroupDTO groupDTO, @RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize);
 }

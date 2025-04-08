@@ -109,7 +109,7 @@ public class FriendController {
     }
 
     /**
-     * 分页查询用户好友列表
+     * 分页查询好友关系列表
      */
     @GetMapping("/page")
     public PageResultData<FriendDTO> page(
@@ -131,7 +131,9 @@ public class FriendController {
                     .userRemark(v.getUserSmallRemark())
                     .friendRemark(v.getUserBigRemark())
                     .userUsername(userSmall.getUsername())
+                    .userAvatar(userSmall.getAvatar())
                     .friendUsername(userBig.getUsername())
+                    .friendAvatar(userBig.getAvatar())
                     .build();
             return dto;
         }).collect(Collectors.toList());

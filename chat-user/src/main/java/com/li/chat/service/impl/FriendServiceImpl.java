@@ -175,19 +175,7 @@ public class FriendServiceImpl implements FriendService {
                 Sort.by(Sort.Direction.DESC, "id")
         );
         Page<Friend> friendPage = friendRepository.findAll(specification, pageable);
-        friendPage.forEach((f) -> {
-            // 让当前用户总是在数据的user位置
-            if (Objects.equals(userId, f.getUserBig().getId())) {
-                // 替换好友信息
-                User tFriend = f.getUserBig();
-                f.setUserBig(f.getUserSmall());
-                f.setUserSmall(tFriend);
-                // 替换好友备注
-                String tRemark = f.getUserBigRemark();
-                f.setUserBigRemark(f.getUserSmallRemark());
-                f.setUserSmallRemark(tRemark);
-            }
-        });
+
         return friendPage;
     }
 

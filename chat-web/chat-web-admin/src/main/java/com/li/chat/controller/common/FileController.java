@@ -78,4 +78,5 @@ public class FileController {
         String url = fileFeign.upload(file, "user-avatar");
         return ResultData.success().put("url", url);
     }
+
 }

@@ -1,5 +1,7 @@
 package com.li.chat.service;
 
+import com.li.chat.common.param.PageParam;
+import com.li.chat.domain.DTO.GroupDTO;
 import com.li.chat.entity.Group;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,4 +50,6 @@ public interface GroupManagementService {
     void update(Group group);
 
     Page<Group> findAllOpenByNameLike(String name, Pageable pageable);
+
+    Page<Group> findByGroupDTO(GroupDTO groupDTO, PageParam pageParam);
 }

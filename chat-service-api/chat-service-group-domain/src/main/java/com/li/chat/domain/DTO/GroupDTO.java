@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * @author malaka
  */
@@ -29,5 +31,7 @@ public class GroupDTO {
     private Long holderUserId;
 
     private Integer joinMode;
+
+    private LocalDateTime createTime;
 
 }

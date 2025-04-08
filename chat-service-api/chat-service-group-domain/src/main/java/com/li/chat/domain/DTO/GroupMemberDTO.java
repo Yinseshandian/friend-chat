@@ -2,6 +2,8 @@ package com.li.chat.domain.DTO;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 /**
  * @author malaka
  */
@@ -22,4 +24,5 @@ public class GroupMemberDTO {
 
     private Integer type;//  类型，0成员，1管理员，2群主
 
+    private LocalDateTime createTime;
 }

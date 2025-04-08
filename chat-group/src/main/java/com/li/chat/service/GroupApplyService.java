@@ -1,5 +1,6 @@
 package com.li.chat.service;
 
+import com.li.chat.common.param.PageParam;
 import com.li.chat.domain.DTO.GroupApplyDTO;
 import com.li.chat.entity.Group;
 import com.li.chat.entity.GroupApply;
@@ -47,4 +48,7 @@ public interface GroupApplyService {
     Page<GroupApply> findGroupApplyByUserId(Long userId, Pageable pageable);
 
 
+    Page<GroupApply> findByGroupApplyDTO(GroupApplyDTO groupApplyDTO, PageParam pageParam);
+
+    void update(GroupApply groupApply);
 }

@@ -1,8 +1,12 @@
 package com.li.chat.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.li.chat.common.enums.GroupApplyEnum;
 import com.li.chat.common.enums.GroupMemberTypeEnum;
+import com.li.chat.common.param.PageParam;
 import com.li.chat.domain.DTO.GroupApplyDTO;
+import com.li.chat.domain.DTO.GroupDTO;
 import com.li.chat.entity.Group;
 import com.li.chat.entity.GroupApply;
 import com.li.chat.repository.GroupApplyRepository;
@@ -11,9 +15,15 @@ import com.li.chat.service.GroupApplyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -109,5 +119,54 @@ public class GroupApplyServiceImpl implements GroupApplyService {
         return groupApplyRepository.findAllByGroupIdIn(manageGroupIdList, pageable);
     }
 
+    @Override
+    public Page<GroupApply> findByGroupApplyDTO(GroupApplyDTO dto, PageParam pageParam) {
+        // 创建动态查询条件
+        Specification<GroupApply> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (dto.getGroupId() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("groupId"), dto.getGroupId()));
+            }
+            if (dto.getUserId() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("userId"), dto.getUserId()));
+            }
+            if (dto.getInviteUserId() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("inviteUserId"), dto.getInviteUserId()));
+            }
+            if (dto.getProcessedBy() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("processedBy"), dto.getProcessedBy()));
+            }
+            if (dto.getStatus() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), dto.getStatus()));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        // 创建分页请求
+        Pageable pageable = PageRequest.of(
+                pageParam.getPageNum() - 1,
+                pageParam.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "id")
+        );
+
+        // 执行分页查询
+        Page<GroupApply> page = groupApplyRepository.findAll(specification, pageable);
+
+        return page;
+    }
+
+    @Override
+    public void update(GroupApply groupApply) {
+        Long id = groupApply.getId();
+        if (ObjectUtils.isEmpty(groupApply.getId())) {
+            throw  new RuntimeException("更新失败，未找到该申请。");
+        }
+        GroupApply oldApply = groupApplyRepository.findById(groupApply.getId()).orElse(null);
+        if (ObjectUtils.isEmpty(oldApply)) {
+            throw  new RuntimeException("更新失败，未找到该申请。");
+        }
+        BeanUtil.copyProperties(groupApply, oldApply, CopyOptions.create().setIgnoreNullValue(true));
+        groupApplyRepository.save(oldApply);
+    }
 
 }

@@ -54,4 +54,12 @@ public interface GroupApplyFeign {
      */
     @GetMapping("/findGroupApplyByUserId")
     PageResultData<GroupApplyDTO> findGroupApplyByUserId(@RequestParam("userId") Long userId, @SpringQueryMap PageParam pageParam);
+
+    @GetMapping("/search")
+    PageResultData<GroupApplyDTO> search(@SpringQueryMap GroupApplyDTO groupApplyDTO,
+                                         @RequestParam("pageNum") int pageNum,
+                                         @RequestParam("pageSize") int pageSize);
+
+    @PutMapping("/update")
+    public void update(@RequestBody GroupApplyDTO applyDTO);
 }

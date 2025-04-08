@@ -116,4 +116,22 @@ public class GroupManagementController {
                 .pageNum(pageNum).build();
     }
 
+    @GetMapping("/search")
+    PageResultData<GroupDTO> search(@SpringQueryMap GroupDTO groupDTO,
+                                    @RequestParam("pageNum") int pageNum,
+                                    @RequestParam("pageSize") int pageSize){
+        PageParam pageParam = PageParam.builder().pageNum(pageNum).pageSize(pageSize).build();
+        Page<Group> page = groupManagementService.findByGroupDTO(groupDTO, pageParam);
+        List<GroupDTO> list = page.stream().map(v -> {
+            GroupDTO dto = GroupDTO.builder().build();
+            BeanUtil.copyProperties(v, dto);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageResultData.<GroupDTO>builder()
+                .total(page.getTotalElements())
+                .rows(list)
+                .pageSize(pageSize)
+                .pageNum(pageNum).build();
+    }
 }

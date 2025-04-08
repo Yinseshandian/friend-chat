@@ -3,6 +3,8 @@ package com.li.chat.service.impl;
 import cn.hutool.core.collection.ListUtil;
 import com.google.common.collect.Lists;
 import com.li.chat.common.enums.GroupJoinModeEnum;
+import com.li.chat.common.param.PageParam;
+import com.li.chat.domain.DTO.GroupDTO;
 import com.li.chat.entity.Group;
 import com.li.chat.entity.GroupMember;
 import com.li.chat.repository.GroupApplyRepository;
@@ -13,11 +15,16 @@ import com.li.chat.service.GroupManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -112,6 +119,37 @@ public class GroupManagementServiceImpl implements GroupManagementService {
     @Override
     public Page<Group> findAllOpenByNameLike(String name, Pageable pageable) {
         return groupManagementRepository.findAllByNameLikeAndJoinModeIn("%" + name + "%", ListUtil.of(GroupJoinModeEnum.MODE_OPEN, GroupJoinModeEnum.MODE_VERIFY), pageable);
+    }
+
+    @Override
+    public Page<Group> findByGroupDTO(GroupDTO groupDTO, PageParam pageParam) {
+        // 创建动态查询条件
+        Specification<Group> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (!StringUtils.isEmpty(groupDTO.getName())) {
+                predicates.add(criteriaBuilder.like(root.get("name"), "%" + groupDTO.getName() + "%"));
+            }
+
+            // 状态精确查询
+            if (groupDTO.getHolderUserId() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("holderUserId"), groupDTO.getHolderUserId()));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        // 创建分页请求
+        Pageable pageable = PageRequest.of(
+                pageParam.getPageNum() - 1,
+                pageParam.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "id")
+        );
+
+        // 执行分页查询
+        Page<Group> page = groupManagementRepository.findAll(specification, pageable);
+
+        return page;
     }
 
 
