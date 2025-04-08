@@ -2,13 +2,19 @@ package com.li.chat.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.li.chat.common.enums.UserEnum;
+import com.li.chat.common.param.PageParam;
+import com.li.chat.common.utils.PageResultData;
+import com.li.chat.domain.DTO.ApplyDTO;
 import com.li.chat.domain.DTO.UserDTO;
 import com.li.chat.entity.User;
 import com.li.chat.service.UserService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.data.domain.Page;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -119,4 +125,27 @@ public class UserController {
         return userService.checkLoginOnToken(token);
     }
 
+    /**
+     * 分页查询用户列表
+     */
+    @GetMapping("/page")
+    public PageResultData<UserDTO> page(
+            @SpringQueryMap UserDTO userDTO,
+            @RequestParam("pageNum") Integer pageNum,
+            @RequestParam("pageSize") Integer pageSize) {
+        PageParam pageParam = PageParam.builder().pageNum(pageNum).pageSize(pageSize).build();
+        Page<User> userPage = userService.page(userDTO, pageParam);
+
+        List<UserDTO> list = userPage.stream().map(v -> {
+            UserDTO dto = UserDTO.builder().build();
+            BeanUtils.copyProperties(v, dto);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageResultData.<UserDTO>builder()
+                .total(userPage.getTotalElements())
+                .rows(list)
+                .pageSize(pageSize)
+                .pageNum(pageNum).build();
+    }
 }

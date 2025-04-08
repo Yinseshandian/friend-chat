@@ -1,5 +1,6 @@
 package com.li.chat.feign;
 
+import com.li.chat.common.utils.PageResultData;
 import com.li.chat.domain.DTO.FriendDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -68,4 +69,14 @@ public interface FriendFeign {
     void updateRemark(@RequestParam("userId") Long userId,
                       @RequestParam("friendId") Long friendId,
                       @RequestParam(value = "remark" ,required = false) String remark);
+
+    /**
+     * 分页查询用户好友列表
+     */
+    @GetMapping("/page")
+    PageResultData<FriendDTO> page(
+            @RequestParam(value = "userId", required = false) Long userId,
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam("pageNum") Integer pageNum,
+            @RequestParam("pageSize") Integer pageSize) ;
 }

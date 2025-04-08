@@ -1,5 +1,6 @@
 package com.li.chat.service;
 
+import com.li.chat.common.param.PageParam;
 import com.li.chat.entity.Apply;
 import com.li.chat.entity.Friend;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,8 @@ public interface FriendService {
     void add(Friend friend);
 
     List<Friend> getFriendList(Long userId, String q);
+
+    Page<Friend> getFriendList(Long userId, String q, PageParam pageParam);
 
     Friend friendInfo(Long userId, Long friendId);
 

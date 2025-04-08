@@ -131,10 +131,10 @@ public class AdminController {
     @ApiOperation("获取管理员列表")
     @GetMapping("/list")
     @RequiresPermission(value = "system:admin:list", message = "没有查看管理员列表的权限")
-    public PageResultData list(AdminDTO adminDTO, PageParam pageParam) {
+    public ResultData list(AdminDTO adminDTO, PageParam pageParam) {
         PageResultData<AdminDTO> pageResultData = adminFeign.search(adminDTO, pageParam.getPageNum(), pageParam.getPageSize());
         pageResultData.setCode(200);
-        return pageResultData;
+        return ResultData.success(pageResultData);
     }
 
     @ApiOperation("获取管理员详情")

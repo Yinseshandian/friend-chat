@@ -1,6 +1,9 @@
 package com.li.chat.service;
 
+import com.li.chat.common.param.PageParam;
+import com.li.chat.domain.DTO.UserDTO;
 import com.li.chat.entity.User;
+import org.springframework.data.domain.Page;
 
 import java.util.Collection;
 import java.util.List;
@@ -81,4 +84,6 @@ public interface UserService {
      * @return 用户id
      */
     Long checkLoginOnToken(String token);
+
+    Page<User> page(UserDTO userDTO, PageParam pageParam);
 }

@@ -5,6 +5,7 @@ import com.li.chat.common.param.PageParam;
 import com.li.chat.common.utils.PageResultData;
 import com.li.chat.domain.DTO.ApplyDTO;
 import com.li.chat.common.enums.ApplyEnum;
+import com.li.chat.domain.DTO.UserDTO;
 import com.li.chat.entity.Apply;
 import com.li.chat.entity.Friend;
 import com.li.chat.entity.User;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author malaka
@@ -112,4 +114,21 @@ public class ApplyController {
                 .pageNum(pageNum).build();
     }
 
+    @GetMapping("/list")
+    PageResultData<ApplyDTO> list(@RequestParam(value = "fromId", required = false) Long fromId,
+                                  @RequestParam(value = "toId", required = false) Long toId, @SpringQueryMap PageParam pageParam) {
+        ApplyDTO queryParam = ApplyDTO.builder().fromId(fromId).toId(toId).build();
+        Page<Apply> page = applyService.list(queryParam, pageParam);
+        List<ApplyDTO> list = page.stream().map(v -> {
+            ApplyDTO dto = ApplyDTO.builder().build();
+            BeanUtils.copyProperties(v, dto);
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageResultData.<ApplyDTO>builder()
+                .total(page.getTotalElements())
+                .rows(list)
+                .pageSize(pageParam.getPageSize())
+                .pageNum(pageParam.getPageNum()).build();
+    }
 }

@@ -1,34 +1,29 @@
-package com.li.chat.domain.DTO;
+package com.li.chat.vo.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 /**
  * @author malaka
  */
-
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
-public class ApplyDTO {
-
+public class ApplyVO {
     private Long id;
-
     private Long fromId;
-
     private Long toId;
-
     private String message;
-
     private String remark;
-
     private Integer status; // 申请状态 0未处理 1同意 2拒绝
-
     private LocalDateTime createTime;
 
+    // 申请人信息
+    private String fromUsername;
+    private String fromNickname;
+    private String fromAvatar;
+
+    // 被申请人信息
+    private String toUsername;
+    private String toNickname;
+    private String toAvatar;
 }

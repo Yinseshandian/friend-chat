@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * @author malaka
  */
@@ -27,6 +29,19 @@ public class FriendDTO {
     private String username;
 
     private String avatar;
+
+    private LocalDateTime createTime;
+    // 好友状态
+    private Integer status;
+
+    // 后台用
+    private String userRemark;
+
+    private String userUsername;
+
+    private String friendRemark;
+
+    private String friendUsername;
 
 
 }

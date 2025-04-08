@@ -47,4 +47,7 @@ public interface ApplyFeign {
      */
     @GetMapping("/applyToMe")
     PageResultData<ApplyDTO> applyToMe(@RequestParam("userId") Long userId, @SpringQueryMap PageParam pageParam);
+
+    @GetMapping("/list")
+    PageResultData<ApplyDTO> list(@RequestParam("fromId") Long fromId,@RequestParam("toId") Long toId, @SpringQueryMap PageParam pageParam);
 }

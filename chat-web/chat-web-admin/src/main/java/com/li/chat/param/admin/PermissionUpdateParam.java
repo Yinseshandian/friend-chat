@@ -16,6 +16,8 @@ public class PermissionUpdateParam {
 
     private String name;
 
+    private String code;
+
     private String path;
 
     private String component;

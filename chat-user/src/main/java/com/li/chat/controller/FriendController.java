@@ -1,17 +1,21 @@
 package com.li.chat.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.li.chat.common.param.PageParam;
+import com.li.chat.common.utils.PageResultData;
 import com.li.chat.domain.DTO.FriendDTO;
+import com.li.chat.domain.DTO.UserDTO;
 import com.li.chat.entity.Friend;
 import com.li.chat.entity.User;
 import com.li.chat.service.FriendService;
 import io.seata.core.context.RootContext;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author malaka
@@ -102,6 +106,41 @@ public class FriendController {
                       @RequestParam("friendId") Long friendId,
                       @RequestParam(value = "remark" ,required = false) String remark) {
         friendService.updateRemark(userId,friendId, remark);
+    }
+
+    /**
+     * 分页查询用户好友列表
+     */
+    @GetMapping("/page")
+    public PageResultData<FriendDTO> page(
+            @RequestParam(value = "userId", required = false) Long userId,
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam("pageNum") Integer pageNum,
+            @RequestParam("pageSize") Integer pageSize) {
+
+        PageParam pageParam = PageParam.builder().pageNum(pageNum).pageSize(pageSize).build();
+        // 获取好友列表
+        Page<Friend> friendPage = friendService.getFriendList(userId, q, pageParam);
+        List<FriendDTO> list = friendPage.stream().map(v -> {
+            User userSmall = v.getUserSmall();
+            User userBig = v.getUserBig();
+            FriendDTO dto = FriendDTO.builder()
+                    .id(v.getId())
+                    .userId(userSmall.getId())
+                    .friendId(userBig.getId())
+                    .userRemark(v.getUserSmallRemark())
+                    .friendRemark(v.getUserBigRemark())
+                    .userUsername(userSmall.getUsername())
+                    .friendUsername(userBig.getUsername())
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+
+        return PageResultData.<FriendDTO>builder()
+                .total(friendPage.getTotalElements())
+                .rows(list)
+                .pageSize(pageSize)
+                .pageNum(pageNum).build();
     }
 
 }

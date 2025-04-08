@@ -1,12 +1,17 @@
 package com.li.chat.service.impl;
 
 import cn.hutool.core.util.NumberUtil;
+import com.li.chat.common.param.PageParam;
 import com.li.chat.entity.Friend;
 import com.li.chat.entity.User;
 import com.li.chat.repository.FriendRepository;
 import com.li.chat.service.FriendService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -122,6 +127,68 @@ public class FriendServiceImpl implements FriendService {
             }
         });
         return friendList;
+    }
+
+    @Override
+    public Page<Friend> getFriendList(Long userId, String q, PageParam pageParam) {
+        // 查询该用户的好友
+        Specification<Friend> specification = Specification.where(new Specification<Friend>(){
+
+            @Override
+            public Predicate toPredicate(Root<Friend> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                criteriaQuery.distinct(true);
+                List<Predicate> predicates = new ArrayList<>();
+                Root<User> join = criteriaQuery.from(User.class);
+                List<Predicate> onList = new ArrayList<>();
+                onList.add(criteriaBuilder.equal(root.get("userBig").get("id"), join.get("id")));
+                onList.add(criteriaBuilder.equal(root.get("userSmall").get("id"), join.get("id")));
+
+                predicates.add(criteriaBuilder.or(onList.toArray(new Predicate[0])));
+
+                if (userId != null) {
+                    predicates.add(criteriaBuilder.equal(join.get("id"), userId));
+                }
+                /**
+                 * 模糊搜索
+                 */
+                if (StringUtils.isNotEmpty(q)) {
+                    String queryLikeStr = "%" + q + "%";
+                    List<Predicate> orList = new ArrayList<>();
+                    // 用户名模糊
+                    orList.add(criteriaBuilder.like(join.get("username"), queryLikeStr));
+
+                    Predicate likeFriendRemark = criteriaBuilder.like(root.get("userBigRemark"), queryLikeStr);
+
+                    Predicate likeUserRemark = criteriaBuilder.like(root.get("userSmallRemark"), queryLikeStr);
+
+                    orList.add(criteriaBuilder.or(likeFriendRemark, likeUserRemark));
+
+                    predicates.add(criteriaBuilder.or(orList.toArray(new Predicate[0])));
+                }
+                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            }
+        } );
+        // 创建分页请求
+        Pageable pageable = PageRequest.of(
+                pageParam.getPageNum() - 1,
+                pageParam.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "id")
+        );
+        Page<Friend> friendPage = friendRepository.findAll(specification, pageable);
+        friendPage.forEach((f) -> {
+            // 让当前用户总是在数据的user位置
+            if (Objects.equals(userId, f.getUserBig().getId())) {
+                // 替换好友信息
+                User tFriend = f.getUserBig();
+                f.setUserBig(f.getUserSmall());
+                f.setUserSmall(tFriend);
+                // 替换好友备注
+                String tRemark = f.getUserBigRemark();
+                f.setUserBigRemark(f.getUserSmallRemark());
+                f.setUserSmallRemark(tRemark);
+            }
+        });
+        return friendPage;
     }
 
     @Override

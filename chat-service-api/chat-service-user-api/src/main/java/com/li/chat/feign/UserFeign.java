@@ -1,5 +1,6 @@
 package com.li.chat.feign;
 
+import com.li.chat.common.utils.PageResultData;
 import com.li.chat.domain.DTO.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
@@ -96,4 +97,10 @@ public interface UserFeign {
      */
     @GetMapping("/checkLoginOnToken")
     Long checkLoginOnToken(@RequestParam("token") String token);
+
+    @GetMapping("/page")
+    public PageResultData<UserDTO> page(
+            @SpringQueryMap UserDTO userDTO,
+            @RequestParam("pageNum") Integer pageNum,
+            @RequestParam("pageSize") Integer pageSize);
 }

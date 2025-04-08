@@ -63,4 +63,19 @@ public class FileController {
         return ResultData.success().put("url", url);
     }
 
+    @ApiOperation("上传用户头像")
+    @GlobalTransactional
+    @PostMapping("/useravatar")
+    public ResultData useravatar(@RequestPart("file") MultipartFile file) {
+        String type = file.getContentType();
+        type = type.substring(0, type.indexOf("/"));
+        if (!Objects.equal("image",type)) {
+            return ResultData.error(WebErrorCodeEnum.USER_INFO_AVATAR_FILE_TYPE_WRONG);
+        }
+        String originalFilename = file.getOriginalFilename();
+        long size = file.getSize();
+        log.info("admin-avatar-用户 {} 上传文件：{} 大小:{}",RequestContext.getUserId(), originalFilename, size);
+        String url = fileFeign.upload(file, "user-avatar");
+        return ResultData.success().put("url", url);
+    }
 }

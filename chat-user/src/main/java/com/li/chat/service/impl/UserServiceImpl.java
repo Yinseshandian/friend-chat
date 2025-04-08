@@ -6,15 +6,22 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.ObjectUtil;
 import com.li.chat.common.enums.RedisCachePrefixEnum;
 import com.li.chat.common.enums.UserEnum;
+import com.li.chat.common.param.PageParam;
 import com.li.chat.common.utils.RedisCache;
+import com.li.chat.domain.DTO.UserDTO;
 import com.li.chat.entity.User;
 import com.li.chat.repository.UserRepository;
 import com.li.chat.service.UserService;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.Predicate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -162,5 +169,41 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         return Long.parseLong(id + "");
+    }
+
+    @Override
+    public Page<User> page(UserDTO userDTO, PageParam pageParam) {
+        // 创建动态查询条件
+        Specification<User> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // id
+            if (!StringUtils.isEmpty(userDTO.getId())) {
+                predicates.add(criteriaBuilder.equal(root.get("id"), userDTO.getId()));
+            }
+            // 用户名模糊查询
+            if (!StringUtils.isEmpty(userDTO.getUsername())) {
+                predicates.add(criteriaBuilder.like(root.get("username"), "%" + userDTO.getUsername() + "%"));
+            }
+
+            // 状态精确查询
+            if (userDTO.getStatus() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), userDTO.getStatus()));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        // 创建分页请求
+        Pageable pageable = PageRequest.of(
+                pageParam.getPageNum() - 1,
+                pageParam.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "id")
+        );
+
+        // 执行分页查询
+        Page<User> userPage = userRepository.findAll(specification, pageable);
+
+        return userPage;
     }
 }
