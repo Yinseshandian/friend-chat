@@ -1,9 +1,9 @@
 package com.li.chat.domain.DTO.message;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -12,10 +12,13 @@ import java.util.Date;
  * q3z3
  * </p>
  */
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Accessors(chain = true) // 链式调用
 @ToString
-public class ChatMsgDTO {
+public class MessageDTO {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,6 +46,12 @@ public class ChatMsgDTO {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private LocalDateTime createTime;
 
+    /**
+     * 查询用
+      */
+    private Long startTime;
+
+    private Long endTime;
 }

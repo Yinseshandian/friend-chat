@@ -2,9 +2,6 @@ package com.li.chat.netty.service;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import com.li.chat.common.enums.ChatOnlineEnum;
-import com.li.chat.domain.DTO.message.ChatMsgDTO;
-import com.li.chat.netty.vo.SendGroupVo;
-import com.li.chat.netty.vo.SendVo;
 
 /**
  * @author malaka
@@ -19,5 +16,6 @@ public interface OnlineService {
 
     ChatOnlineEnum checkOnline(Long userId);
 
+    String getOnlineNodeId(Long userId);
 
 }

@@ -3,12 +3,13 @@ package com.li.chat;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * @author malaka
  */
-
 @SpringBootApplication
+@EnableJpaRepositories("com.li.chat.repository")
 @EnableDiscoveryClient
 public class ChatMessageApplication {
 

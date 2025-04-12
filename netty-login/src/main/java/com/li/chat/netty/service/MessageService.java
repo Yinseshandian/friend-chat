@@ -1,7 +1,7 @@
 package com.li.chat.netty.service;
 
 import com.li.chat.common.enums.MessageStatusEnum;
-import com.li.chat.domain.DTO.message.ChatMsgDTO;
+import com.li.chat.domain.DTO.message.MessageDTO;
 import com.li.chat.netty.vo.PushBodyVo;
 import com.li.chat.netty.vo.SendGroupVo;
 import com.li.chat.netty.vo.SendVo;
@@ -15,21 +15,21 @@ import java.util.Set;
  */
 public interface MessageService {
 
-    int saveOfflineMsg(Long toId, ChatMsgDTO message);
+    int saveOfflineMsg(Long toId, MessageDTO message);
 
-    List<ChatMsgDTO> getOfflineMsgByUid(Long userId, Date date, long start, long end);
+    List<MessageDTO> getOfflineMsgByUid(Long userId, Date date, long start, long end);
 
     void removeMsgByDate(Long userId, Date date);
 
-    public PushBodyVo buildPushBody(ChatMsgDTO message);
+    public PushBodyVo buildPushBody(MessageDTO message);
 
-    MessageStatusEnum sendSingleMessage(ChatMsgDTO message);
+    MessageStatusEnum sendSingleMessage(MessageDTO message);
 
-    ChatMsgDTO buildSingleMessageDTO(SendVo sendVo);
+    MessageDTO buildSingleMessageDTO(SendVo sendVo);
 
-    ChatMsgDTO buildGroupMessageDTO(SendGroupVo sendVo);
+    MessageDTO buildGroupMessageDTO(SendGroupVo sendVo);
 
-    MessageStatusEnum sendGroupMessage(ChatMsgDTO message);
+    MessageStatusEnum sendGroupMessage(MessageDTO message);
 
-    Set<Long> sendGroupOnlineMessage(ChatMsgDTO message);
+    Set<Long> sendGroupOnlineMessage(MessageDTO message);
 }

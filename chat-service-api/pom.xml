@@ -21,6 +21,7 @@
         <module>chat-service-message-domain</module>
         <module>chat-service-admin-api</module>
         <module>chat-service-admin-domain</module>
+        <module>chat-service-message-api</module>
     </modules>
 
     <dependencies>

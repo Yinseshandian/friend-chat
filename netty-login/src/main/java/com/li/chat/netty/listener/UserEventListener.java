@@ -9,7 +9,7 @@ import com.li.chat.common.enums.MessageClientEnum;
 import com.li.chat.common.enums.MessageSocketioEvent;
 import com.li.chat.common.enums.MessageStatusEnum;
 import com.li.chat.common.enums.RedisCachePrefixEnum;
-import com.li.chat.domain.DTO.message.ChatMsgDTO;
+import com.li.chat.domain.DTO.message.MessageDTO;
 import com.li.chat.netty.service.OnlineService;
 import com.li.chat.netty.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +74,7 @@ public class UserEventListener extends AbstractEventListener{
             log.info("用户{}发送单聊消息，目标：{}，消息内容：{} {}", userId, sendVo.getUserId(), sendVo.getMsgType(), sendVo.getContent());
             sendVo.setFromId(userId);
 
-            ChatMsgDTO message = messageService.buildSingleMessageDTO(sendVo);
+            MessageDTO message = messageService.buildSingleMessageDTO(sendVo);
 
             MessageStatusEnum sendStatusEnum = messageService.sendSingleMessage(message);
 
@@ -118,7 +118,7 @@ public class UserEventListener extends AbstractEventListener{
             Date targetDate = calendar.getTime();
 
             long start = 0;
-            List<ChatMsgDTO> msgDTOList;
+            List<MessageDTO> msgDTOList;
 
             // 分批获取当天的消息，直到没有更多消息
             do {
@@ -128,8 +128,8 @@ public class UserEventListener extends AbstractEventListener{
                     break;
                 }
                 List<PushBodyVo> pushBodyVoList = new ArrayList<>();
-                for (ChatMsgDTO chatMsgDTO : msgDTOList) {
-                    pushBodyVoList.add(messageService.buildPushBody(chatMsgDTO));
+                for (MessageDTO messageDTO : msgDTOList) {
+                    pushBodyVoList.add(messageService.buildPushBody(messageDTO));
                 }
                 client.sendEvent(MessageSocketioEvent.SEND_OFFLINE_MESSAGE, pushBodyVoList);
                 // 添加需要的消息数量
@@ -140,7 +140,7 @@ public class UserEventListener extends AbstractEventListener{
 
     }
 
-    private void saveOfflineMessage(ChatMsgDTO message) {
+    private void saveOfflineMessage(MessageDTO message) {
         // 存储到redis离线消息集合
         messageService.saveOfflineMsg(message.getToId(), message);
     }

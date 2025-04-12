@@ -142,8 +142,46 @@ public class GroupApplyController {
     @GlobalTransactional
     @PutMapping("/agreeApply")
     public ResultData agreeApply(@RequestParam("applyId") Long applyId) {
+        // 查找申请
         GroupApplyDTO applyDTO = groupApplyFeign.findById(applyId);
         if (BeanUtil.isEmpty(applyDTO)) {
+            return ResultData.error(WebErrorCodeEnum.GROUP_APPLY_NO_FOUND);
+        }
+        // 已是群成员
+        if (groupMemberFeign.isGroupMember(applyDTO.getUserId(), applyDTO.getGroupId())) {
+            return ResultData.error(WebErrorCodeEnum.GROUP_APPLY_ALREADY_A_GROUP_MEMBER);
+        }
+        // 查找当前用户
+        Long userId = RequestContext.getUserId();
+        Long groupId = applyDTO.getGroupId();
+        GroupMemberDTO groupMemberDTO = groupMemberFeign.findByGroupIdAndUserId(groupId, userId);
+        if (groupMemberDTO==null) {
+            return ResultData.error(WebErrorCodeEnum.GROUP_APPLY_NOT_MANAGER);
+        }
+        Integer type = groupMemberDTO.getType();
+        // 当前用户是管理员或群主可同意
+        if (Objects.equals(type, GroupMemberTypeEnum.TYPE_MANAGER) || Objects.equals(type, GroupMemberTypeEnum.TYPE_MASTER)) {
+            GroupMemberDTO member = GroupMemberDTO.builder()
+                    .userId(applyDTO.getUserId())
+                    .groupId(groupId)
+                    .type(GroupMemberTypeEnum.TYPE_MEMBER)
+                    .build();
+            applyDTO.setStatus(GroupApplyEnum.STATUS_AGREE);
+            groupMemberFeign.create(member);
+            applyDTO.setProcessedBy(userId);
+            groupApplyFeign.update(applyDTO);
+        }else {
+            return ResultData.error(WebErrorCodeEnum.GROUP_APPLY_NOT_MANAGER);
+        }
+        return ResultData.success();
+    }
+
+    @ApiOperation(value = "拒绝申请")
+    @GlobalTransactional
+    @PutMapping("/refuse")
+    public ResultData refuse(@RequestParam("applyId") Long applyId) {
+        GroupApplyDTO applyDTO = groupApplyFeign.findById(applyId);
+        if (BeanUtil.isEmpty(applyDTO) && GroupApplyEnum.STATUS_REFUSE.equals(applyDTO.getStatus())) {
             return ResultData.error(WebErrorCodeEnum.GROUP_APPLY_NO_FOUND);
         }
         Long userId = RequestContext.getUserId();
@@ -153,16 +191,10 @@ public class GroupApplyController {
             return ResultData.error(WebErrorCodeEnum.GROUP_APPLY_NOT_MANAGER);
         }
         Integer type = groupMemberDTO.getType();
-        // 管理员或群主可同意
+        // 管理员或群主
         if (Objects.equals(type, GroupMemberTypeEnum.TYPE_MANAGER) || Objects.equals(type, GroupMemberTypeEnum.TYPE_MASTER)) {
-            GroupMemberDTO member = GroupMemberDTO.builder()
-                    .userId(applyDTO.getUserId())
-                    .groupId(groupId)
-                    .type(GroupMemberTypeEnum.TYPE_MEMBER)
-                    .build();
-            groupMemberFeign.create(member);
-            applyDTO.setProcessedBy(userId);
-            groupApplyFeign.agreeApply(applyDTO);
+            applyDTO.setStatus(GroupApplyEnum.STATUS_REFUSE);
+            groupApplyFeign.update(applyDTO);
         }else {
             return ResultData.error(WebErrorCodeEnum.GROUP_APPLY_NOT_MANAGER);
         }

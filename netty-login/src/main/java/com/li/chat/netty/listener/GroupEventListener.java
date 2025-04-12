@@ -6,7 +6,7 @@ import com.corundumstudio.socketio.annotation.OnEvent;
 import com.li.chat.common.enums.MessageClientEnum;
 import com.li.chat.common.enums.MessageSocketioEvent;
 import com.li.chat.common.enums.MessageStatusEnum;
-import com.li.chat.domain.DTO.message.ChatMsgDTO;
+import com.li.chat.domain.DTO.message.MessageDTO;
 import com.li.chat.netty.service.MessageService;
 import com.li.chat.netty.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class GroupEventListener extends AbstractEventListener{
                 return;
             }
             sendVo.setFromId(userId);
-            ChatMsgDTO message = messageService.buildGroupMessageDTO(sendVo);
+            MessageDTO message = messageService.buildGroupMessageDTO(sendVo);
 
             MessageStatusEnum sendStatusEnum = messageService.sendGroupMessage(message);
 

@@ -2,14 +2,13 @@ package com.li.chat.netty.mq.consumer;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.li.chat.common.enums.MessageMqEnum;
-import com.li.chat.domain.DTO.message.ChatMsgDTO;
+import com.li.chat.domain.DTO.message.MessageDTO;
 import com.li.chat.netty.autoconfigure.socketio.SocketIoProperties;
 import com.li.chat.netty.service.MessageService;
 import com.li.chat.netty.vo.MsgMqVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
-import org.apache.rocketmq.spring.annotation.SelectorType;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,7 +37,7 @@ public class MessageConsumer {
         public void onMessage(MsgMqVo msgMqVo) {
             String nodeId = msgMqVo.getNodeId();
             if (ObjectUtil.equal(nodeId, socketIoProperties.getNodeId())) {
-                ChatMsgDTO message = msgMqVo.getMessage();
+                MessageDTO message = msgMqVo.getMessage();
                 log.info("node: {} 转发消息: {}",nodeId,  message);
                 messageService.sendSingleMessage(message);
             }
@@ -56,7 +55,7 @@ public class MessageConsumer {
         public void onMessage(MsgMqVo msgMqVo) {
             String nodeId = msgMqVo.getNodeId();
             if (!ObjectUtil.equal(nodeId, socketIoProperties.getNodeId())) {
-                ChatMsgDTO message = msgMqVo.getMessage();
+                MessageDTO message = msgMqVo.getMessage();
                 log.info("node: {} 广播群消息: {}",nodeId , message);
                 messageService.sendGroupOnlineMessage(message);
             }

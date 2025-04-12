@@ -47,4 +47,40 @@ public class FileController {
                 .put("fileName", originalFilename);
     }
 
+    @ApiOperation("上传聊天视频")
+    @GlobalTransactional
+    @PostMapping("/uploadChatVideo")
+    public ResultData uploadChatVideo(@RequestPart("file") MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        String type = file.getContentType();
+
+        if (type == null || !type.contains("video")) {
+            return ResultData.error(WebErrorCodeEnum.USER_INFO_AVATAR_FILE_TYPE_WRONG);
+        }
+        long size = file.getSize();
+        log.info("common-file-用户 {} 上传文件：{} 大小:{}", RequestContext.getUserId(), originalFilename, size);
+        String url = fileFeign.upload(file, "chat-video");
+        return ResultData.success()
+                .put("fullPath", url)
+                .put("fileName", originalFilename);
+    }
+
+    @ApiOperation("上传聊天图片")
+    @GlobalTransactional
+    @PostMapping("/uploadChatImage")
+    public ResultData uploadChatImage(@RequestPart("file") MultipartFile file) {
+        String type = file.getContentType();
+        type = type.substring(0, type.indexOf("/"));
+        if (!Objects.equal("image",type)) {
+            return ResultData.error(WebErrorCodeEnum.USER_INFO_AVATAR_FILE_TYPE_WRONG);
+        }
+        String originalFilename = file.getOriginalFilename();
+        long size = file.getSize();
+        log.info("user-avatar-用户 {} 上传文件：{} 大小:{}",RequestContext.getUserId(), originalFilename, size);
+        String url = fileFeign.upload(file, "chat-image");
+        return ResultData.success()
+                .put("fullPath", url)
+                .put("fileName", originalFilename);
+    }
+
 }

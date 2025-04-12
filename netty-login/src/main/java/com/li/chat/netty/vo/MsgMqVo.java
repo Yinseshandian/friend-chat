@@ -1,6 +1,6 @@
 package com.li.chat.netty.vo;
 
-import com.li.chat.domain.DTO.message.ChatMsgDTO;
+import com.li.chat.domain.DTO.message.MessageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +17,6 @@ public class MsgMqVo {
 
     private String nodeId;
 
-    private ChatMsgDTO message;
+    private MessageDTO message;
 
 }

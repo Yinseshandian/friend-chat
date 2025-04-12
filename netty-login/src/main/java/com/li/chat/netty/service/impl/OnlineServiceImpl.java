@@ -1,29 +1,21 @@
 package com.li.chat.netty.service.impl;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.li.chat.common.enums.ChatOnlineEnum;
 import com.li.chat.common.enums.MessageClientEnum;
 import com.li.chat.common.enums.RedisCachePrefixEnum;
-import com.li.chat.common.enums.TalkTypeEnum;
 import com.li.chat.common.utils.RedisCache;
 import com.li.chat.domain.DTO.GroupDTO;
-import com.li.chat.domain.DTO.message.ChatMsgDTO;
 import com.li.chat.feign.GroupManagementFeign;
-import com.li.chat.feign.GroupMemberFeign;
 import com.li.chat.feign.UserFeign;
 import com.li.chat.netty.autoconfigure.socketio.SocketIoProperties;
 import com.li.chat.netty.manager.UserClientManager;
 import com.li.chat.netty.service.OnlineService;
-import com.li.chat.netty.vo.SendGroupVo;
-import com.li.chat.netty.vo.SendVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author malaka
@@ -60,7 +52,7 @@ public class OnlineServiceImpl implements OnlineService {
 
         client.set(MessageClientEnum.CLIENT_UID_KEY, userId);
         userClientManager.addClient(userId, client);
-
+        goGroupOnline(client);
         return userId;
     }
 
@@ -94,7 +86,7 @@ public class OnlineServiceImpl implements OnlineService {
 
     @Override
     public ChatOnlineEnum checkOnline(Long userId) {
-        String nodeId = redisCache.getCacheObject(buildOnlineKey(userId));
+        String nodeId = getOnlineNodeId(userId);
         if (nodeId == null) {
             return ChatOnlineEnum.OFFLINE;
         }
@@ -104,6 +96,10 @@ public class OnlineServiceImpl implements OnlineService {
         return ChatOnlineEnum.ONLINE_OTHER;
     }
 
+    @Override
+    public String getOnlineNodeId(Long userId) {
+        return  redisCache.getCacheObject(buildOnlineKey(userId));
+    }
 
     private Long validateToken(String token) {
         return userFeign.checkLoginOnToken(token);

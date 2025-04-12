@@ -1,7 +1,6 @@
 package com.li.chat.netty.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
@@ -13,15 +12,15 @@ import com.li.chat.domain.DTO.FriendDTO;
 import com.li.chat.domain.DTO.GroupDTO;
 import com.li.chat.domain.DTO.GroupMemberDTO;
 import com.li.chat.domain.DTO.UserDTO;
-import com.li.chat.domain.DTO.message.ChatMsgDTO;
+import com.li.chat.domain.DTO.message.MessageDTO;
 import com.li.chat.feign.FriendFeign;
 import com.li.chat.feign.GroupManagementFeign;
 import com.li.chat.feign.GroupMemberFeign;
 import com.li.chat.feign.UserFeign;
 import com.li.chat.netty.autoconfigure.message.OfflineMsgProperties;
-import com.li.chat.netty.listener.AbstractEventListener;
 import com.li.chat.netty.listener.GroupEventListener;
 import com.li.chat.netty.manager.UserClientManager;
+import com.li.chat.netty.mq.producer.MessageProducer;
 import com.li.chat.netty.service.MessageService;
 import com.li.chat.netty.service.OnlineService;
 import com.li.chat.netty.vo.*;
@@ -70,13 +69,16 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     protected FriendFeign friendFeign;
 
+    @Autowired
+    private MessageProducer messageProducer;
+
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-
+    private final static String FORMAT_DATETIME = "yyyy-MM-dd HH:mm";
 
     @Override
-    public PushBodyVo buildPushBody(ChatMsgDTO message) {
+    public PushBodyVo buildPushBody(MessageDTO message) {
         if ("GROUP".equals(message.getTalkType())) {
             return buildGroupPushBody(message);
         }else if ("SINGLE".equals(message.getTalkType())) {
@@ -85,7 +87,7 @@ public class MessageServiceImpl implements MessageService {
         return null;
     }
 
-    protected PushBodyVo buildSinglePushBody(ChatMsgDTO message) {
+    protected PushBodyVo buildSinglePushBody(MessageDTO message) {
         PushMsgVo pushMsgVo = new PushMsgVo()
                 .setMsgType(message.getMsgType())
                 .setTop("N")
@@ -101,14 +103,13 @@ public class MessageServiceImpl implements MessageService {
         from.setPortrait(friendDTO.getAvatar());
 
         PushBodyVo pushBodyVo = new PushBodyVo(message.getId(), PushBodyTypeEnum.MSG, pushMsgVo);
-        pushBodyVo.setCreateTime(DateUtil.format(message.getCreateTime(), DatePattern.NORM_DATETIME_FORMAT));
+        pushBodyVo.setCreateTime(DateUtil.format(message.getCreateTime(),FORMAT_DATETIME));
         // 发送人
         pushBodyVo.setFromInfo(BeanUtil.toBean(from, PushFromVo.class).setUserType(from.getUserType()));
-
         return pushBodyVo;
     }
 
-    private PushBodyVo buildGroupPushBody(ChatMsgDTO message) {
+    private PushBodyVo buildGroupPushBody(MessageDTO message) {
         Long groupId = message.getToId();
         Long userId = message.getFromId();
         Long msgId = message.getId();
@@ -133,7 +134,7 @@ public class MessageServiceImpl implements MessageService {
 
         // 推送体
         PushBodyVo pushBodyVo = new PushBodyVo(msgId, PushBodyTypeEnum.MSG, pushMsgVo);
-        pushBodyVo.setCreateTime(DateUtil.format(message.getCreateTime(), DatePattern.NORM_DATETIME_FORMAT));
+        pushBodyVo.setCreateTime(DateUtil.format(message.getCreateTime(),FORMAT_DATETIME));
         // 发送人
         pushBodyVo.setFromInfo(BeanUtil.toBean(from, PushFromVo.class).setUserType(from.getUserType()));
         // 群
@@ -147,7 +148,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public int saveOfflineMsg(Long toId, ChatMsgDTO message) {
+    public int saveOfflineMsg(Long toId, MessageDTO message) {
         // 存储到redis离线消息集合
         String key = RedisCachePrefixEnum.NETTY_CHAT_OFFLINE_MSG + message.getToId() + ":" + sdf.format(new Date());
         Boolean isNew = redisTemplate.hasKey(key);
@@ -161,11 +162,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<ChatMsgDTO> getOfflineMsgByUid(Long userId, Date date, long start, long end) {
+    public List<MessageDTO> getOfflineMsgByUid(Long userId, Date date, long start, long end) {
         String key = RedisCachePrefixEnum.NETTY_CHAT_OFFLINE_MSG + userId + ":" + sdf.format(date);
         ListOperations listOperations = redisTemplate.opsForList();
         List<String> msgJsonList = listOperations.range(key, start, end);
-        List<ChatMsgDTO> msgList = JSONUtil.toList(msgJsonList.toString(), ChatMsgDTO.class);
+        List<MessageDTO> msgList = JSONUtil.toList(msgJsonList.toString(), MessageDTO.class);
         return msgList;
     }
 
@@ -176,39 +177,42 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public ChatMsgDTO buildSingleMessageDTO(SendVo sendVo) {
+    public MessageDTO buildSingleMessageDTO(SendVo sendVo) {
         long msgId = IdUtil.getSnowflake().nextId();
-        ChatMsgDTO message = new ChatMsgDTO()
+        MessageDTO message = new MessageDTO()
                 .setId(msgId)
                 .setFromId(sendVo.getFromId())
                 .setToId(sendVo.getUserId())
                 .setMsgType(sendVo.getMsgType().getCode())
                 .setTalkType(TalkTypeEnum.SINGLE.getCode())
                 .setContent(sendVo.getContent())
-                .setCreateTime(DateUtil.date());
+                .setCreateTime(DateUtil.toLocalDateTime(DateUtil.date()));
         return message;
     }
 
     @Override
-    public ChatMsgDTO buildGroupMessageDTO(SendGroupVo sendVo) {
+    public MessageDTO buildGroupMessageDTO(SendGroupVo sendVo) {
         long msgId = IdUtil.getSnowflake().nextId();
-        ChatMsgDTO message = new ChatMsgDTO()
+        MessageDTO message = new MessageDTO()
                 .setFromId(sendVo.getFromId())
                 .setToId(sendVo.getGroupId())
                 .setMsgType(sendVo.getMsgType().getCode())
                 .setTalkType(TalkTypeEnum.GROUP.getCode())
                 .setContent(sendVo.getContent())
                 .setId(msgId)
-                .setCreateTime(DateUtil.date());
+                .setCreateTime(DateUtil.toLocalDateTime(DateUtil.date()));
         return message;
     }
 
     @Override
-    public MessageStatusEnum sendGroupMessage(ChatMsgDTO message) {
+    public MessageStatusEnum sendGroupMessage(MessageDTO message) {
         Long userId = message.getFromId();
-        if (!groupMemberFeign.isGroupMember(userId, message.getId())) {
+        if (!groupMemberFeign.isGroupMember(userId, message.getToId())) {
             return MessageStatusEnum.GROUP_INFO_NOT_EXIST;
         }
+
+        // 先广播消息
+        messageProducer.broadcastGroupMessage(message);
         // 发送在线消息
         Set<Long> sendUserIds = sendGroupOnlineMessage(message);
 
@@ -227,12 +231,13 @@ public class MessageServiceImpl implements MessageService {
         for (Long id : uidList) {
             saveOfflineMsg(id, message);
         }
-        // TODO 发送MQ广播群消息
+
+        messageProducer.saveHistoryMessage(message);
         return MessageStatusEnum.OK;
     }
 
     @Override
-    public Set<Long> sendGroupOnlineMessage(ChatMsgDTO message) {
+    public Set<Long> sendGroupOnlineMessage(MessageDTO message) {
         PushBodyVo pushBodyVo = buildPushBody(message);
 
         Set<Long> sendUserIds = new HashSet<>();
@@ -251,7 +256,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public MessageStatusEnum sendSingleMessage(ChatMsgDTO message) {
+    public MessageStatusEnum sendSingleMessage(MessageDTO message) {
 
         Long userId = message.getFromId();
         Long friendId = message.getToId();
@@ -260,7 +265,8 @@ public class MessageServiceImpl implements MessageService {
             return MessageStatusEnum.FRIEND_TO;
         }
         // 检查接收方是否在线
-        ChatOnlineEnum chatOnlineEnum = onlineService.checkOnline(friendId);
+        String onlineNodeId = this.onlineService.getOnlineNodeId(friendId);
+        ChatOnlineEnum chatOnlineEnum = this.onlineService.checkOnline(friendId);
 
         PushBodyVo pushBodyVo = buildPushBody(message);
 
@@ -273,12 +279,13 @@ public class MessageServiceImpl implements MessageService {
         }
         if (chatOnlineEnum == ChatOnlineEnum.ONLINE_OTHER){
             // TODO 其他服务器在线：转发
+            messageProducer.forwardMessage(onlineNodeId, message);
         }
         if (chatOnlineEnum == ChatOnlineEnum.OFFLINE){
             //  离线：存储到离线表
             saveOfflineMsg(message.getToId(), message);
         }
-        // TODO 发送MQ保存到数据库
+        messageProducer.saveHistoryMessage(message);
         return MessageStatusEnum.OK;
     }
 
