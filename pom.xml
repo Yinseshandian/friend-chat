@@ -40,25 +40,87 @@
         <spring.cloud.alibaba.version>2.2.0.RELEASE</spring.cloud.alibaba.version>
         <rocketmq.spring.version>2.0.2</rocketmq.spring.version>
         <druid.starter.vertion>1.2.8</druid.starter.vertion>
+        <apache.poi.version>5.2.3</apache.poi.version>
+        <jpa-query-wrapper.version>1.0.0</jpa-query-wrapper.version>
+        <swagger.version>3.0.0</swagger.version>
+        <swagger.xiaoymin.ui.version>1.9.6</swagger.xiaoymin.ui.version>
+        <feign.form.spring.version>3.3.0</feign.form.spring.version>
+        <jackson.version>2.9.4</jackson.version>
+        <easy-captcha.version>1.6.2</easy-captcha.version>
+        <seata.version>1.0.0</seata.version>
+        <swagger-models.version>1.5.21</swagger-models.version>
+        <hutool.version>5.8.18</hutool.version>
+        <minio.version>8.2.2</minio.version>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-    </dependencies>
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <artifactId>chat</artifactId>
                 <groupId>com.li</groupId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
+            <!-- common -->
+            <dependency>
+                <groupId>com.li</groupId>
+                <artifactId>chat-common</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <!-- api -->
+            <dependency>
+                <artifactId>chat-service-user-api</artifactId>
+                <groupId>com.li</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>chat-service-group-api</artifactId>
+                <groupId>com.li</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>chat-service-admin-api</artifactId>
+                <groupId>com.li</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>chat-service-message-api</artifactId>
+                <groupId>com.li</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>chat-service-base-api</artifactId>
+                <groupId>com.li</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <!--domain-->
+            <dependency>
+                <artifactId>chat-service-user-domain</artifactId>
+                <groupId>com.li</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>chat-service-group-domain</artifactId>
+                <groupId>com.li</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>chat-service-admin-domain</artifactId>
+                <groupId>com.li</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>chat-service-message-domain</artifactId>
+                <groupId>com.li</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>chat-service-base-domain</artifactId>
+                <groupId>com.li</groupId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
             <!--druid -->
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -73,7 +135,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!--spring cloud 阿里巴巴-->
+            <!--spring cloud alibaba-->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
@@ -107,31 +169,130 @@
                 <version>${rocketmq.spring.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${apache.poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${apache.poi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fhs-opensource</groupId>
+                <artifactId>jpa-query-wrapper</artifactId>
+                <version>${jpa-query-wrapper.version}</version>
+            </dependency>
+
+            <!--swagger-boot-->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>swagger-bootstrap-ui</artifactId>
+                <version>${swagger.xiaoymin.ui.version}</version>
+            </dependency>
+           <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+
+            <!-- Swagger-base -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-models.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-models</artifactId>
+                <version>${swagger-models.version}</version>
+            </dependency>
+
+            <!-- Seata -->
+            <dependency>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-all</artifactId>
+                <version>${seata.version}</version>
+            </dependency>
+
+            <!-- Hutool -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- Easy Captcha（已在 properties 中定义） -->
+            <dependency>
+                <groupId>com.github.whvcse</groupId>
+                <artifactId>easy-captcha</artifactId>
+                <version>${easy-captcha.version}</version>
+            </dependency>
+
+            <!--feign-->
+            <dependency>
+                <groupId>io.github.openfeign.form</groupId>
+                <artifactId>feign-form-spring</artifactId>
+                <version>${feign.form.spring.version}</version>
+            </dependency>
+
+            <!-- Jackson -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!--minio-->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
         </dependencies>
+
     </dependencyManagement>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <!--打开开关-->
-                <configuration>
-                    <fork>true</fork>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                        <!--打开开关-->
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>

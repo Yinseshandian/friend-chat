@@ -16,7 +16,6 @@
         <dependency>
             <groupId>com.li</groupId>
             <artifactId>chat-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
             <exclusions>
                 <!-- 移除 spring web -->
                 <exclusion>
@@ -38,17 +37,14 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.4</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.9.4</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.9.4</version>
         </dependency>
 
         <dependency>
@@ -56,5 +52,17 @@
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

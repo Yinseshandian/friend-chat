@@ -13,24 +13,20 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.li</groupId>
             <artifactId>chat-service-group-api</artifactId>
-            <groupId>com.li</groupId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>com.li</groupId>
             <artifactId>chat-service-user-api</artifactId>
-            <groupId>com.li</groupId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>com.li</groupId>
             <artifactId>chat-service-user-domain</artifactId>
-            <groupId>com.li</groupId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>chat-service-base-api</artifactId>
             <groupId>com.li</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>chat-service-base-api</artifactId>
         </dependency>
         <!-- 参数校验 -->
         <dependency>
@@ -42,21 +38,30 @@
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>swagger-bootstrap-ui</artifactId>
-            <version>1.9.6</version>
         </dependency>
 
 
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
