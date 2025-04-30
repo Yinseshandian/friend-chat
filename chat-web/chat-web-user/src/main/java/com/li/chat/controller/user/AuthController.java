@@ -1,6 +1,7 @@
 package com.li.chat.controller.user;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.li.chat.common.enums.RedisCachePrefixEnum;
 import com.li.chat.common.enums.UserLoginTypeEnum;
 import com.li.chat.common.enums.WebErrorCodeEnum;
 import com.li.chat.domain.DTO.CaptchaDTO;
@@ -112,5 +113,10 @@ public class AuthController {
         return ResultData.error(WebErrorCodeEnum.USER_AUTH_LOGIN_FAIL);
     }
 
-
+    @ApiOperation(value = "退出登录")
+    @PostMapping("/logout")
+    public ResultData logout(@RequestHeader("Authorization") String token) {
+        redisCache.deleteObject(RedisCachePrefixEnum.USER_AUTH_LOGIN_TOKEN_TO_ID + token);
+        return ResultData.success();
+    }
 }

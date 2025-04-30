@@ -68,6 +68,7 @@ public class AuthGlobalFilter implements GlobalFilter {
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpRequest mutableReq = request
                     .mutate()
+                    .header("Authorization", token)
                     .header(RequestContext.USER_ID_KEY, uid + "")
                     .build();
 

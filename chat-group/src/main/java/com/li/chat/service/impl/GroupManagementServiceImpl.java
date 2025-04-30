@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -152,5 +153,9 @@ public class GroupManagementServiceImpl implements GroupManagementService {
         return page;
     }
 
+    @Override
+    public List<Group> findGroupByIds(Collection<Long> groupIds) {
+        return groupManagementRepository.findAllById(groupIds);
+    }
 
 }

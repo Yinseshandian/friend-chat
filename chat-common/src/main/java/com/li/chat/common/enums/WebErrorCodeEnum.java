@@ -51,6 +51,7 @@ public enum WebErrorCodeEnum {
     GROUP_APPLY_ALREADY_NOT_A_GROUP_MEMBER(50202004, "当前用户不是群成员"),
     GROUP_APPLY_NO_FOUND(50202005, "群申请不存在"),
     GROUP_APPLY_NOT_MANAGER(50202005, "不是该群管理员"),
+    GROUP_APPLY_NOT_OPEN(50202006, "不是开放群聊"),
     /**
      * 0203群组成员接口
      */

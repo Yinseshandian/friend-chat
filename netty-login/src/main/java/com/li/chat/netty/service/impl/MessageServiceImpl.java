@@ -260,7 +260,6 @@ public class MessageServiceImpl implements MessageService {
 
         Long userId = message.getFromId();
         Long friendId = message.getToId();
-
         if (!friendFeign.isFriend(userId, friendId)) {
             return MessageStatusEnum.FRIEND_TO;
         }
@@ -278,7 +277,7 @@ public class MessageServiceImpl implements MessageService {
             }
         }
         if (chatOnlineEnum == ChatOnlineEnum.ONLINE_OTHER){
-            // TODO 其他服务器在线：转发
+            // 其他服务器在线：转发
             messageProducer.forwardMessage(onlineNodeId, message);
         }
         if (chatOnlineEnum == ChatOnlineEnum.OFFLINE){

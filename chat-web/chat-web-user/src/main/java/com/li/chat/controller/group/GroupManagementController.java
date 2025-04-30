@@ -88,9 +88,7 @@ public class GroupManagementController {
     @GetMapping("/info/{groupId}")
     public ResultData info(@PathVariable("groupId") Long groupId) {
         Long userId = RequestContext.getUserId();
-        if (!groupMemberFeign.isGroupMember(userId, groupId)) {
-            return ResultData.error(WebErrorCodeEnum.GROUP_MEMBER_NOT_MEMBER);
-        }
+
         GroupDTO group = groupManagementFeign.findGroupById(groupId);
 
         return ResultData.success(group);

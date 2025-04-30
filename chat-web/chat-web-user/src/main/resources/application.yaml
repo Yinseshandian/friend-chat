@@ -31,3 +31,8 @@ feign:
   httpclient:
     connection-timeout: 10000
     connection-timer-repeat: 10000
+
+ribbon:
+  eager-load:
+    clients:  chat-user，chat-group, chat-message
+    enabled:  true

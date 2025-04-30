@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -31,6 +32,14 @@ public interface GroupManagementFeign {
      */
     @GetMapping("/findGroupById")
     GroupDTO findGroupById(@RequestParam("groupId") Long groupId);
+
+    /**
+     * id 列表查找群组
+     * @param groupIds
+     * @return
+     */
+    @GetMapping("/findGroupByIds")
+    List<GroupDTO> findGroupByIds(@RequestParam("groupIds") Collection<Long> groupIds);
 
     /**
      * 通过用户id查找群组

@@ -10,6 +10,7 @@ import com.li.chat.domain.DTO.GroupMemberDTO;
 import com.li.chat.domain.DTO.UserDTO;
 import com.li.chat.feign.GroupMemberFeign;
 import com.li.chat.feign.UserFeign;
+import com.li.chat.param.group.GroupMemberParam;
 import com.li.chat.vo.GroupMemberVo;
 import io.seata.spring.annotation.GlobalTransactional;
 import io.swagger.annotations.Api;
@@ -39,7 +40,7 @@ public class GroupMemberController {
         this.userFeign = userFeign;
     }
 
-    @ApiOperation(value = "获取群成员")
+    @ApiOperation(value = "获取群成员列表")
     @GlobalTransactional
     @GetMapping("/list")
     public ResultData list(Long groupId) {
@@ -70,6 +71,30 @@ public class GroupMemberController {
 
         return ResultData.success(groupMemberVoList)
                 .put("memberType", member.getType());
+    }
+
+    @ApiOperation(value = "获取群成员")
+    @GlobalTransactional
+    @GetMapping("/info")
+    public ResultData info(GroupMemberParam param) {
+        Long userId = RequestContext.getUserId();
+        Long groupId = param.getGroupId();
+        Long memberUid = param.getUserId();
+        if (groupMemberFeign.isGroupMember(userId, groupId)) {
+            return ResultData.error(WebErrorCodeEnum.GROUP_MEMBER_NOT_MEMBER);
+        }
+        GroupMemberDTO memberDTO = groupMemberFeign.findByGroupIdAndUserId(groupId, memberUid);
+        UserDTO userDTO = userFeign.findUserById(memberUid);
+        GroupMemberVo groupMemberVo = GroupMemberVo.builder()
+                .id(memberDTO.getId())
+                .userId(memberDTO.getUserId())
+                .type(memberDTO.getType())
+                .remark(memberDTO.getNickname())
+                .username(userDTO.getUsername())
+                .nickname(userDTO.getNickname())
+                .avatar(userDTO.getAvatar())
+                .build();
+        return ResultData.success(groupMemberVo);
     }
 
     @ApiOperation(value = "退出群聊")

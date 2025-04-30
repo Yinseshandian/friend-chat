@@ -18,6 +18,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -134,4 +135,21 @@ public class GroupManagementController {
                 .pageSize(pageSize)
                 .pageNum(pageNum).build();
     }
+
+    /**
+     * id 列表查找群组
+     * @param groupIds
+     * @return
+     */
+    @GetMapping("/findGroupByIds")
+    public List<GroupDTO> findGroupByIds(@RequestParam("groupIds") Collection<Long> groupIds) {
+        List<Group> groupList = groupManagementService.findGroupByIds(groupIds);
+        List<GroupDTO> list = groupList.stream().map(v -> {
+            GroupDTO dto = GroupDTO.builder().build();
+            BeanUtil.copyProperties(v, dto);
+            return dto;
+        }).collect(Collectors.toList());
+        return list;
+    }
+
 }
